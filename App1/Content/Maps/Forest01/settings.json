@@ -1,0 +1,20 @@
+{
+  "name": "Forest01",
+  "size": {
+    "width": 512,
+    "height": 384
+  },
+  "tile": {
+    "gridSize": 32
+  },
+  "spawn": {
+    "x": 64,
+    "y": 192,
+    "facing": "east"
+  },
+  "music": "forest_theme.ogg",
+  "encounterRate": 25,
+  "weather": "rain",
+  "ambientSound": "birds.ogg",
+  "notes": "Demo values; replace with your production art and data."
+}

@@ -1,0 +1,76 @@
+# .NET build artifacts
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+*.log
+
+# MonoGame Content Pipeline (MGCB) build outputs
+Content/bin/
+Content/obj/
+# Built content files (XNBs) if any end up outside the default bin/obj
+*.xnb
+
+# Rider / IntelliJ IDE
+.idea/
+*.iml
+
+# Visual Studio / VS Code (if used)
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# NuGet
+*.nupkg
+# (keep the next two, they are useful to commit)
+# .config/dotnet-tools.json
+# packages.config
+
+# Publish outputs
+publish/
+artifacts/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Crash dumps / temp
+*.stackdump
+*.tmp
+*.temp
+
+# ReSharper / JetBrains caches (if any outside .idea)
+_ReSharper.Caches/
+
+# Generated cache from tooling
+*.VisualState.xml
+*.cache
+*.ide
+
+# MonoDevelop/Xamarin
+*.pidb
+*.mdb
+
+# Optional: ignore any local assets not intended for VCS
+# Uncomment and tailor if you stage local-only assets during dev
+# Assets/Temp/
+# Content/Temp/
+
+# Ignore Rider workspace-only files if nested
+**/.idea/**/workspace.xml
+**/.idea/**/tasks.xml
+**/.idea/**/dictionaries
+**/.idea/**/shelf
+
+# Ignore lock files created by some tools
+*.lock.json
+
+# JetBrains HTTP client requests (if not needed)
+.http/

@@ -1,0 +1,61 @@
+{
+  "triggers": [
+    {
+      "id": "pickup_herb",
+      "area": {
+        "x": 300,
+        "y": 180,
+        "w": 16,
+        "h": 16
+      },
+      "once": true,
+      "onEnter": [
+        {
+          "type": "playSfx",
+          "id": "pickup_item"
+        },
+        {
+          "type": "addItem",
+          "id": "healing_herb",
+          "qty": 1
+        },
+        {
+          "type": "showToast",
+          "text": "You found a Healing Herb!"
+        }
+      ]
+    }
+  ],
+  "cutscenes": {
+    "bridge_intro": [
+      {
+        "type": "lockPlayer"
+      },
+      {
+        "type": "cameraFocus",
+        "x": 256,
+        "y": 192,
+        "durationMs": 600
+      },
+      {
+        "type": "dialogue",
+        "speaker": "Guard01",
+        "text": "The bridge ahead is unsafe... unless the gate is opened."
+      },
+      {
+        "type": "dialogue",
+        "speaker": "Hero",
+        "text": "Got it. I\u2019ll look for a switch."
+      },
+      {
+        "type": "unlockPlayer"
+      }
+    ]
+  },
+  "autoStart": [
+    {
+      "when": "firstEnter",
+      "run": "bridge_intro"
+    }
+  ]
+}

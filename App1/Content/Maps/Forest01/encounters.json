@@ -1,0 +1,10 @@
+{
+  "zoneColors": {
+    "#00FF00": "forestLowLevel",
+    "#0000FF": "riverMonsters"
+  },
+  "defaults": {
+    "stepsPerCheck": 22,
+    "chancePercent": 12
+  }
+}

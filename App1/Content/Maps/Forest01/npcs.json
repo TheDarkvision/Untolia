@@ -1,0 +1,26 @@
+[
+  {
+    "id": "Guard01",
+    "x": 180,
+    "y": 220,
+    "sprite": "guard.png",
+    "dialogue": "guard_intro.json",
+    "facing": "south",
+    "wander": {
+      "radius": 16,
+      "pauseMs": [
+        800,
+        1600
+      ]
+    }
+  },
+  {
+    "id": "Merchant01",
+    "x": 200,
+    "y": 250,
+    "sprite": "merchant.png",
+    "shopInventory": "town_shop.json",
+    "dialogue": "merchant_smalltalk.json",
+    "facing": "west"
+  }
+]
