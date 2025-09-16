@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Text.Json;
-using Untolia.Core;
 
 namespace Untolia.Core.Inventory;
 
@@ -34,16 +30,19 @@ public static class ItemLoader
 
         string? root = null;
         foreach (var r in candidateRoots)
-        {
-            if (Directory.Exists(r)) { root = r; break; }
-        }
+            if (Directory.Exists(r))
+            {
+                root = r;
+                break;
+            }
+
         if (root == null)
         {
             Globals.Log.Warn($"Inventory: Root not found for '{itemsRoot}'");
             return 0;
         }
 
-        int loaded = 0;
+        var loaded = 0;
         Globals.Log.Info($"Inventory: Scanning {root}");
 
         foreach (var dir in Directory.EnumerateDirectories(root))
@@ -58,7 +57,6 @@ public static class ItemLoader
             }
 
             foreach (var file in Directory.EnumerateFiles(dir, "*.json", SearchOption.TopDirectoryOnly))
-            {
                 try
                 {
                     var json = File.ReadAllText(file);
@@ -77,15 +75,13 @@ public static class ItemLoader
                     loaded++;
                     Globals.Log.Debug($"Inventory: Registered '{def.Id}' ({def.Category})");
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     Globals.Log.Error(ex, $"Inventory: Failed to read {file}");
                 }
-            }
         }
 
         Globals.Log.Info($"Inventory: Loaded {loaded} item definition(s)");
         return loaded;
     }
-
 }

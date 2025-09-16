@@ -28,14 +28,14 @@ public sealed class MapData
     public Point Spawn { get; init; } = new(0, 0);
     public Rectangle CameraBounds { get; init; }
 
-    public System.Collections.Generic.IReadOnlyList<Portal> Portals { get; init; } = System.Array.Empty<Portal>();
-    
-    public System.Collections.Generic.IReadOnlyList<MapEvent> Events { get; init; } = System.Array.Empty<MapEvent>();
+    public IReadOnlyList<Portal> Portals { get; init; } = Array.Empty<Portal>();
 
-    
+    public IReadOnlyList<MapEvent> Events { get; init; } = Array.Empty<MapEvent>();
+
+
     // Collision sampling data
     // Always width * height in length, where width/height = CollisionWidth/CollisionHeight
-    public bool[] CollisionBlocked { get; init; } = System.Array.Empty<bool>(); // true = blocked
+    public bool[] CollisionBlocked { get; init; } = Array.Empty<bool>(); // true = blocked
     public int CollisionWidth { get; init; }
     public int CollisionHeight { get; init; }
 }

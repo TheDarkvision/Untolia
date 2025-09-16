@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Untolia.Core;
-
 namespace Untolia.Core.Maps;
 
 public sealed class MapManifest
@@ -22,8 +19,17 @@ public sealed class MapManifest
     public Point2? PlayerSpawn { get; set; } = new() { X = 0, Y = 0 };
 }
 
-public sealed class Size2 { public int Width { get; set; } public int Height { get; set; } }
-public sealed class Point2 { public int X { get; set; } public int Y { get; set; } }
+public sealed class Size2
+{
+    public int Width { get; set; }
+    public int Height { get; set; }
+}
+
+public sealed class Point2
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+}
 
 public sealed class LayersSection
 {

@@ -1,14 +1,25 @@
 {
   "id": "House01",
-  "size": { "width": 1024, "height": 1024 },
+  "size": {
+    "width": 1024,
+    "height": 1024
+  },
   "tileSize": 16,
-
   "layers": {
     "background": "layer_background.png"
   },
-
   "portals": [
-    { "id": "to_house", "x": 128, "y": 128, "width": 32, "height": 32,
-      "targetMap": "Forest01", "targetSpawn": { "x": 0, "y": 0 } }
+    {
+      "id": "to_house",
+      "x": 128,
+      "y": 128,
+      "width": 32,
+      "height": 32,
+      "targetMap": "Forest01",
+      "targetSpawn": {
+        "x": 0,
+        "y": 0
+      }
+    }
   ]
 }

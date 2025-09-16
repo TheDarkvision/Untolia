@@ -3,25 +3,135 @@
   "name": "Caelen",
   "portrait": "Portraits/Caelen",
   "startingLevel": 1,
-  "baseStats": { "force": 6, "focus": 4, "resolve": 5, "agility": 5 },
+  "baseStats": {
+    "force": 6,
+    "focus": 4,
+    "resolve": 5,
+    "agility": 5
+  },
   "growth": {
     "model": "keyframes",
-    "force":  [ { "lvl": 1, "val": 6 }, { "lvl": 10, "val": 18 }, { "lvl": 20, "val": 32 } ],
-    "focus":  [ { "lvl": 1, "val": 4 }, { "lvl": 10, "val": 12 }, { "lvl": 20, "val": 20 } ],
-    "resolve":[ { "lvl": 1, "val": 5 }, { "lvl": 10, "val": 16 }, { "lvl": 20, "val": 28 } ],
-    "agility":[ { "lvl": 1, "val": 5 }, { "lvl": 10, "val": 15 }, { "lvl": 20, "val": 26 } ],
-    "hp":     [ { "lvl": 1, "val": 60 }, { "lvl": 10, "val": 220 }, { "lvl": 20, "val": 420 } ],
-    "mp":     [ { "lvl": 1, "val": 24 }, { "lvl": 10, "val": 90 },  { "lvl": 20, "val": 160 } ]
+    "force": [
+      {
+        "lvl": 1,
+        "val": 6
+      },
+      {
+        "lvl": 10,
+        "val": 18
+      },
+      {
+        "lvl": 20,
+        "val": 32
+      }
+    ],
+    "focus": [
+      {
+        "lvl": 1,
+        "val": 4
+      },
+      {
+        "lvl": 10,
+        "val": 12
+      },
+      {
+        "lvl": 20,
+        "val": 20
+      }
+    ],
+    "resolve": [
+      {
+        "lvl": 1,
+        "val": 5
+      },
+      {
+        "lvl": 10,
+        "val": 16
+      },
+      {
+        "lvl": 20,
+        "val": 28
+      }
+    ],
+    "agility": [
+      {
+        "lvl": 1,
+        "val": 5
+      },
+      {
+        "lvl": 10,
+        "val": 15
+      },
+      {
+        "lvl": 20,
+        "val": 26
+      }
+    ],
+    "hp": [
+      {
+        "lvl": 1,
+        "val": 60
+      },
+      {
+        "lvl": 10,
+        "val": 220
+      },
+      {
+        "lvl": 20,
+        "val": 420
+      }
+    ],
+    "mp": [
+      {
+        "lvl": 1,
+        "val": 24
+      },
+      {
+        "lvl": 10,
+        "val": 90
+      },
+      {
+        "lvl": 20,
+        "val": 160
+      }
+    ]
   },
-  "expCurve": { "model": "linear", "base": 100, "perLevel": 50 },
+  "expCurve": {
+    "model": "linear",
+    "base": 100,
+    "perLevel": 50
+  },
   "learnset": [
-    { "level": 1, "ability": "guard" },
-    { "level": 3, "ability": "power_strike" },
-    { "level": 7, "ability": "rally" },
-    { "level": 12, "ability": "defiance" },
-    { "level": 18, "ability": "blade_flare" }
+    {
+      "level": 1,
+      "ability": "guard"
+    },
+    {
+      "level": 3,
+      "ability": "power_strike"
+    },
+    {
+      "level": 7,
+      "ability": "rally"
+    },
+    {
+      "level": 12,
+      "ability": "defiance"
+    },
+    {
+      "level": 18,
+      "ability": "blade_flare"
+    }
   ],
-  "elements": { "resist": ["earth"], "weak": ["shadow"], "immune": [] },
+  "elements": {
+    "resist": [
+      "earth"
+    ],
+    "weak": [
+      "shadow"
+    ],
+    "immune": []
+  },
   "equipment": {
     "weapon": "steel_longsword",
     "shield": "kite_shield",
@@ -43,9 +153,20 @@
   },
   "role": {
     "battleStyle": "Frontline protector who balances defense and forceful strikes.",
-    "strengths": ["durability", "team support", "steady scaling"],
-    "weaknesses": ["limited magic", "slow buildup compared to burst damage roles"]
+    "strengths": [
+      "durability",
+      "team support",
+      "steady scaling"
+    ],
+    "weaknesses": [
+      "limited magic",
+      "slow buildup compared to burst damage roles"
+    ]
   },
-  "tags": ["human", "sword", "frontline"],
+  "tags": [
+    "human",
+    "sword",
+    "frontline"
+  ],
   "version": 1
 }

@@ -1,4 +1,5 @@
 // Untolia.Core/Maps/Portal.cs
+
 using Microsoft.Xna.Framework;
 
 namespace Untolia.Core.Maps;

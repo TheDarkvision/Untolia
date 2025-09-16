@@ -1,42 +1,40 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
 using Untolia.Core.Inventory;
 
 namespace Untolia.Core.UI;
 
 public sealed class InventoryMenu : Menu
 {
-    private enum InvTab { Items, Equipment, KeyItems }
-
-    private InvTab _tab = InvTab.Items;
-
-    // Selection per tab (index into the live stacks list for that tab)
-    private readonly Dictionary<InvTab, int> _sel = new()
-    {
-        { InvTab.Items, 0 },
-        { InvTab.Equipment, 0 },
-        { InvTab.KeyItems, 0 },
-    };
-
-    // Scrolling and input debounce (separate from Menu base to avoid conflicts)
-    private float _listScroll = 0f;
-    private int _prevWheel = 0;
-
-    private float _listNavCooldown = 0f;
-    private float _tabCooldown = 0f;
-    private float _actCooldown = 0f;
     private const float NavCd = 0.12f;
     private const float TabCd = 0.16f;
     private const float ActCd = 0.18f;
 
     // Viewport metrics for keeping selection visible
     private const float RowHeight = 28f;
-    private int _listViewTop = 0;         // pixel Y of visible list area top
-    private int _listViewBottom = 0;      // pixel Y of visible list area bottom
-    private int _listContentTop = 0;      // pixel Y where first row starts (row 0 top)
+
+    // Selection per tab (index into the live stacks list for that tab)
+    private readonly Dictionary<InvTab, int> _sel = new()
+    {
+        { InvTab.Items, 0 },
+        { InvTab.Equipment, 0 },
+        { InvTab.KeyItems, 0 }
+    };
+
+    private float _actCooldown;
+    private int _listContentTop; // pixel Y where first row starts (row 0 top)
+
+    private float _listNavCooldown;
+
+    // Scrolling and input debounce (separate from Menu base to avoid conflicts)
+    private float _listScroll;
+    private int _listViewBottom; // pixel Y of visible list area bottom
+    private int _listViewTop; // pixel Y of visible list area top
+    private int _prevWheel;
+
+    private InvTab _tab = InvTab.Items;
+    private float _tabCooldown;
 
     public InventoryMenu()
     {
@@ -56,7 +54,7 @@ public sealed class InventoryMenu : Menu
     {
         // Left-side, full-height panel with a nice margin
         var margin = 24f;
-        var panelWidth = (int)System.Math.Clamp(Globals.ScreenSize.X * 0.28f, 280f, 420f);
+        var panelWidth = (int)Math.Clamp(Globals.ScreenSize.X * 0.28f, 280f, 420f);
         var panelHeight = Globals.ScreenSize.Y - (int)(margin * 2);
         Size = new Vector2(panelWidth, panelHeight);
         Position = new Vector2(margin, margin);
@@ -79,9 +77,9 @@ public sealed class InventoryMenu : Menu
 
     public override void Update(float deltaTime)
     {
-        _listNavCooldown = System.Math.Max(0, _listNavCooldown - deltaTime);
-        _tabCooldown = System.Math.Max(0, _tabCooldown - deltaTime);
-        _actCooldown = System.Math.Max(0, _actCooldown - deltaTime);
+        _listNavCooldown = Math.Max(0, _listNavCooldown - deltaTime);
+        _tabCooldown = Math.Max(0, _tabCooldown - deltaTime);
+        _actCooldown = Math.Max(0, _actCooldown - deltaTime);
 
         var kb = Keyboard.GetState();
         var ms = Mouse.GetState();
@@ -93,6 +91,7 @@ public sealed class InventoryMenu : Menu
             _tabCooldown = TabCd;
             EnsureSelectionVisible();
         }
+
         if (_tabCooldown <= 0f && (kb.IsKeyDown(Keys.Right) || kb.IsKeyDown(Keys.E)))
         {
             _tab = (InvTab)(((int)_tab + 1) % 3);
@@ -111,6 +110,7 @@ public sealed class InventoryMenu : Menu
                 EnsureSelectionVisible();
             }
         }
+
         if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Down) || kb.IsKeyDown(Keys.S)))
         {
             var stacks = GetCurrentStacks();
@@ -123,12 +123,12 @@ public sealed class InventoryMenu : Menu
         }
 
         // Mouse wheel scroll
-        int wheel = ms.ScrollWheelValue;
-        int delta = wheel - _prevWheel;
+        var wheel = ms.ScrollWheelValue;
+        var delta = wheel - _prevWheel;
         _prevWheel = wheel;
         if (delta != 0)
         {
-            _listScroll -= (delta / 120f) * 40f; // pixels per notch
+            _listScroll -= delta / 120f * 40f; // pixels per notch
             if (_listScroll < 0f) _listScroll = 0f;
         }
 
@@ -138,6 +138,7 @@ public sealed class InventoryMenu : Menu
             UseSelected();
             _actCooldown = ActCd;
         }
+
         if (_actCooldown <= 0f && kb.IsKeyDown(Keys.Escape))
         {
             BackToGameMenu();
@@ -153,7 +154,8 @@ public sealed class InventoryMenu : Menu
 
         // Right pane fills remaining screen area with same vertical margins
         var margin = 24;
-        var rightRect = new Rectangle(leftRect.Right + margin, margin, Globals.ScreenSize.X - leftRect.Right - margin * 2, Globals.ScreenSize.Y - margin * 2);
+        var rightRect = new Rectangle(leftRect.Right + margin, margin,
+            Globals.ScreenSize.X - leftRect.Right - margin * 2, Globals.ScreenSize.Y - margin * 2);
         DrawRightPane(spriteBatch, rightRect);
     }
 
@@ -168,17 +170,18 @@ public sealed class InventoryMenu : Menu
         sb.Draw(UIAssets.PixelTexture, headerRect, new Color(60, 60, 90, 160));
         var t = "INVENTORY";
         var ts = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, t);
-        sb.DrawStringSafe(UIAssets.DefaultFont, t, new Vector2(headerRect.X + 12, headerRect.Y + (headerRect.Height - ts.Y) / 2f), Color.White);
+        sb.DrawStringSafe(UIAssets.DefaultFont, t,
+            new Vector2(headerRect.X + 12, headerRect.Y + (headerRect.Height - ts.Y) / 2f), Color.White);
 
         // Actions list (from base _items, but drawn in our style)
         float y = headerRect.Bottom + 16;
-        float lh = 36f;
+        var lh = 36f;
         float leftPad = panelRect.X + 24;
         float rightPad = panelRect.Right - 24;
 
-        for (int i = 0; i < _items.Count; i++)
+        for (var i = 0; i < _items.Count; i++)
         {
-            var isSelected = (i == _selectedIndex);
+            var isSelected = i == _selectedIndex;
             var label = _items[i].Text;
             var sz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, label);
 
@@ -204,7 +207,8 @@ public sealed class InventoryMenu : Menu
         var hsz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, hint);
         var hintRect = new Rectangle(panelRect.X + 6, panelRect.Bottom - 40, panelRect.Width - 12, 34);
         sb.Draw(UIAssets.PixelTexture, hintRect, new Color(30, 30, 30, 160));
-        var hpos = new Vector2(panelRect.X + (panelRect.Width - hsz.X) / 2f, hintRect.Y + (hintRect.Height - hsz.Y) / 2f);
+        var hpos = new Vector2(panelRect.X + (panelRect.Width - hsz.X) / 2f,
+            hintRect.Y + (hintRect.Height - hsz.Y) / 2f);
         sb.DrawStringSafe(UIAssets.DefaultFont, hint, hpos, Color.Gray);
     }
 
@@ -218,7 +222,7 @@ public sealed class InventoryMenu : Menu
         sb.Draw(UIAssets.PixelTexture, tabsRect, new Color(60, 60, 90, 100));
 
         var tabNames = new[] { "Items", "Equipment", "Key Items" };
-        for (int i = 0; i < 3; i++)
+        for (var i = 0; i < 3; i++)
         {
             var isActive = (int)_tab == i;
             var w = tabsRect.Width / 3;
@@ -232,8 +236,9 @@ public sealed class InventoryMenu : Menu
         }
 
         // List area (between tabs and description)
-        int descHeight = 110;
-        var listArea = new Rectangle(pane.X + 10, tabsRect.Bottom + 10, pane.Width - 20, pane.Height - (tabsRect.Height + 10) - descHeight - 16);
+        var descHeight = 110;
+        var listArea = new Rectangle(pane.X + 10, tabsRect.Bottom + 10, pane.Width - 20,
+            pane.Height - (tabsRect.Height + 10) - descHeight - 16);
         sb.Draw(UIAssets.PixelTexture, listArea, new Color(0, 0, 0, 40));
 
         // Update viewport info for selection visibility
@@ -245,23 +250,23 @@ public sealed class InventoryMenu : Menu
         var stacks = GetCurrentStacks();
         var selIdx = _sel[_tab];
 
-        float y = listArea.Y + 6 - _listScroll;
+        var y = listArea.Y + 6 - _listScroll;
         float leftPad = listArea.X + 10;
 
         // Auto-scroll to keep selection visible
         if (stacks.Count > 0)
         {
-            float selTop = _listContentTop + selIdx * RowHeight;
-            float selBottom = selTop + RowHeight;
+            var selTop = _listContentTop + selIdx * RowHeight;
+            var selBottom = selTop + RowHeight;
             if (selBottom - _listScroll > _listViewBottom) _listScroll = selBottom - _listViewBottom;
             if (selTop - _listScroll < _listViewTop) _listScroll = selTop - _listViewTop;
             if (_listScroll < 0f) _listScroll = 0f;
         }
 
-        for (int i = 0; i < stacks.Count; i++)
+        for (var i = 0; i < stacks.Count; i++)
         {
             var (stack, def) = stacks[i];
-            bool selected = (i == selIdx);
+            var selected = i == selIdx;
 
             var rowRect = new Rectangle(listArea.X + 2, (int)(y - 2), listArea.Width - 4, (int)(RowHeight + 4));
             if (rowRect.Bottom >= listArea.Top && rowRect.Top <= listArea.Bottom)
@@ -273,7 +278,7 @@ public sealed class InventoryMenu : Menu
                     sb.Draw(UIAssets.PixelTexture, accent, Color.CornflowerBlue);
                 }
 
-                string text = stack.Quantity > 1 ? $"{def.Name} x{stack.Quantity}" : def.Name;
+                var text = stack.Quantity > 1 ? $"{def.Name} x{stack.Quantity}" : def.Name;
                 var sz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, text);
                 var pos = new Vector2(leftPad, y + (RowHeight - sz.Y) / 2f);
                 sb.DrawStringSafe(UIAssets.DefaultFont, text, pos, selected ? Color.White : Color.LightGray);
@@ -295,7 +300,8 @@ public sealed class InventoryMenu : Menu
             var tPos = new Vector2(descRect.X + 8, descRect.Y + 8);
             sb.DrawStringSafe(UIAssets.DefaultFont, title, tPos, Color.White);
 
-            var bodyRect = new Rectangle(descRect.X + 8, (int)(tPos.Y + tSz.Y + 6), descRect.Width - 16, descRect.Height - (int)(tSz.Y + 16));
+            var bodyRect = new Rectangle(descRect.X + 8, (int)(tPos.Y + tSz.Y + 6), descRect.Width - 16,
+                descRect.Height - (int)(tSz.Y + 16));
             DrawWrap(sb, def.Description ?? "-", bodyRect, Color.LightGray);
         }
     }
@@ -314,8 +320,8 @@ public sealed class InventoryMenu : Menu
         if (_sel[_tab] >= stacks.Count) _sel[_tab] = stacks.Count - 1;
         if (_sel[_tab] < 0) _sel[_tab] = 0;
 
-        float selTop = _listContentTop + _sel[_tab] * RowHeight;
-        float selBottom = selTop + RowHeight;
+        var selTop = _listContentTop + _sel[_tab] * RowHeight;
+        var selBottom = selTop + RowHeight;
 
         if (_listViewBottom > _listViewTop)
         {
@@ -353,7 +359,7 @@ public sealed class InventoryMenu : Menu
         if (stacks.Count == 0) return;
 
         var (stack, def) = stacks[_sel[_tab]];
-        bool handled = Globals.Inventory.Use(def.Id);
+        var handled = Globals.Inventory.Use(def.Id);
 
         var msg = new MessageBox(
             _tab switch
@@ -362,9 +368,7 @@ public sealed class InventoryMenu : Menu
                 InvTab.Equipment => $"Equipped {def.Name}!",
                 InvTab.KeyItems => $"You inspect {def.Name}.",
                 _ => def.Name
-            },
-            null,
-            UIPosition.Center
+            }
         );
         Globals.UI.Add(msg);
 
@@ -400,7 +404,7 @@ public sealed class InventoryMenu : Menu
     {
         var words = text.Split(' ');
         float x = area.X, y = area.Y;
-        string line = "";
+        var line = "";
         foreach (var w in words)
         {
             var test = string.IsNullOrEmpty(line) ? w : line + " " + w;
@@ -417,7 +421,15 @@ public sealed class InventoryMenu : Menu
                 line = test;
             }
         }
+
         if (!string.IsNullOrEmpty(line) && y <= area.Bottom)
             sb.DrawStringSafe(UIAssets.DefaultFont, line, new Vector2(x, y), color);
+    }
+
+    private enum InvTab
+    {
+        Items,
+        Equipment,
+        KeyItems
     }
 }

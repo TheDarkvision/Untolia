@@ -1,32 +1,30 @@
-﻿using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Untolia.Core;
+using Untolia.Core.Dialogue;
 using Untolia.Core.Inventory;
 using Untolia.Core.Maps;
 using Untolia.Core.Player;
-using Untolia.Core.RPG;
 using Untolia.Core.UI;
-using Untolia.Core.Dialogue;
 using MessageBox = Untolia.Core.UI.MessageBox;
 
 namespace Untolia;
 
 public class Untolia : Game
 {
+    private readonly Camera2D _camera = new(); // camera that follows the player and clamps to map
     private readonly GraphicsDeviceManager _graphics;
     private readonly PlayerController _playerController = new();
 
     private MapData _currentMap = null!;
-    private PlayerEntity _player = null!;
-    private Camera2D _camera = new(); // camera that follows the player and clamps to map
-
-    private float _portalCooldown = 0f;
 
     private bool _debugDraw = true; // toggle with F3
-    private Texture2D? _debugPixel; // 1x1 pixel for drawing rects
     private SpriteFont? _debugFont; // font for debug labels "D" and "E"
+    private Texture2D? _debugPixel; // 1x1 pixel for drawing rects
+    private PlayerEntity _player = null!;
+
+    private float _portalCooldown;
 
     private KeyboardState _previousKeyboard;
     private SpriteBatch _spriteBatch = null!;
@@ -81,16 +79,21 @@ public class Untolia : Game
     private void TrySeed(string itemId, int qty)
     {
         if (Globals.Inventory.GetDef(itemId) != null)
-        {
-            try { Globals.Inventory.Add(itemId, qty); } catch { /* ignore */ }
-        }
+            try
+            {
+                Globals.Inventory.Add(itemId, qty);
+            }
+            catch
+            {
+                /* ignore */
+            }
     }
 
     private void FillParty()
     {
-        Globals.Party.Recruit(Globals.Characters, "caelen", levelOverride: null, addToParty: true);
-        Globals.Party.Recruit(Globals.Characters, "lyra", levelOverride: null, addToParty: true);
-        Globals.Party.Recruit(Globals.Characters, "thalen", levelOverride: null, addToParty: true);
+        Globals.Party.Recruit(Globals.Characters, "caelen", null, true);
+        Globals.Party.Recruit(Globals.Characters, "lyra", null, true);
+        Globals.Party.Recruit(Globals.Characters, "thalen", null, true);
     }
 
     private void InitializeGlobals()
@@ -112,7 +115,24 @@ public class Untolia : Game
     private void LoadMap(string mapId)
     {
         _currentMap = MapLoader.LoadFromManifest(GraphicsDevice, Content, $"Maps/{mapId}");
+
+        // Log portals present in the loaded map
+        if (_currentMap.Portals.Count > 0)
+        {
+            Globals.Log.Info($"Game: Loaded map '{_currentMap.Id}' with {_currentMap.Portals.Count} portal(s):");
+            foreach (var p in _currentMap.Portals)
+            {
+                var r = p.Area;
+                Globals.Log.Info(
+                    $"  portal id='{p.Id}' rect=({r.X},{r.Y},{r.Width},{r.Height}) target='{p.TargetMap}' spawn=({p.TargetSpawn.X},{p.TargetSpawn.Y})");
+            }
+        }
+        else
+        {
+            Globals.Log.Info($"Game: Loaded map '{_currentMap.Id}' with no portals.");
+        }
     }
+
 
     private void InitializePlayer()
     {
@@ -155,56 +175,69 @@ public class Untolia : Game
     {
         var keyboard = Keyboard.GetState();
 
-        // Example: quick EXP test
-        if (_previousKeyboard.IsKeyDown(Keys.E))
-        {
-            Globals.Party.AwardExpAll(
-                amount: 150,
-                registry: Globals.Characters,
-                onLevelUp: (member, levelsGained) =>
-                {
-                    var msg = new MessageBox(
-                        $"{member.Name} leveled up! (+{levelsGained})",
-                        null,
-                        UIPosition.TopRight
-                    );
-                    Globals.UI.Add(msg);
-                });
-        }
-
         Globals.GameTime = gameTime;
         Input.Update();
 
-        // Update UI
+        // Update UI first (so it can consume input)
         var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Globals.UI.Update(deltaTime);
 
-        // Update game only if no modal UI is active
-        if (!Globals.UI.HasModalElements())
+        // If any modal UI is active, do NOT process gameplay inputs (movement, toggles, etc.)
+        // Only the focused UI element should react to keys (handled inside the UI system/controls).
+        var hasModal = Globals.UI.HasModalElements();
+
+        if (!hasModal)
+        {
+            // Gameplay-only key handling (disabled while modal UI is shown)
+
+            // Example: quick EXP test
+            if (_previousKeyboard.IsKeyDown(Keys.F4))
+                Globals.Party.AwardExpAll(
+                    150,
+                    Globals.Characters,
+                    (member, levelsGained) =>
+                    {
+                        var msg = new MessageBox(
+                            $"{member.Name} leveled up! (+{levelsGained})",
+                            null,
+                            UIPosition.TopRight
+                        );
+                        Globals.UI.Add(msg);
+                    });
+
+            // Update player and world systems when no modal UI is shown
             UpdatePlayer(gameTime);
 
-        // Update camera to follow player after movement
-        _camera.Follow(_player.Position);
+            // Camera follow remains okay here (player moves only without modal)
+            _camera.Follow(_player.Position);
 
-        // Handle portals
-        var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        if (_portalCooldown > 0f) _portalCooldown -= dt;
-        TryEnterPortal();
-        
-        // New: tile-trigger events
-        TryTriggerTileEvents();
+            // Portals and tile events only trigger outside of modal UI
+            var dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if (_portalCooldown > 0f) _portalCooldown -= dt;
+            TryEnterPortal();
+            TryTriggerTileEvents();
 
-        // Toggle debug overlay
+            // Toggle game menu
+            if (!_previousKeyboard.IsKeyDown(Keys.Tab) && keyboard.IsKeyDown(Keys.Tab))
+                ToggleGameMenu();
+        }
+        else
+        {
+            // While a modal UI is up, keep camera steady (or follow if you want parallax)
+            _camera.Follow(_player.Position);
+
+            // DO NOT process gameplay toggles (E/T/M), movement, portals, or tile events here.
+            // The UI elements themselves should handle Enter/Space/Escape or other UI keys.
+        }
+
+        // Debug toggle can be global, but you can also gate it with !hasModal if desired
         if (!_previousKeyboard.IsKeyDown(Keys.F3) && keyboard.IsKeyDown(Keys.F3))
             _debugDraw = !_debugDraw;
-
-        // Toggle game menu
-        if (!_previousKeyboard.IsKeyDown(Keys.Tab) && keyboard.IsKeyDown(Keys.Tab))
-            ToggleGameMenu();
 
         _previousKeyboard = keyboard;
         base.Update(gameTime);
     }
+
 
     private void TryTriggerTileEvents()
     {
@@ -217,7 +250,7 @@ public class Untolia : Game
 
         foreach (var ev in _currentMap.Events)
         {
-            if (!string.Equals(ev.When, "onTileEnter", System.StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(ev.When, "onTileEnter", StringComparison.OrdinalIgnoreCase))
                 continue;
 
             // Must have an area to test
@@ -229,7 +262,7 @@ public class Untolia : Game
 
             if (ev.Area.Value.Contains(pPoint))
             {
-                bool handled = HandleEvent(ev);
+                var handled = HandleEvent(ev);
                 if (handled && ev.OneTime)
                 {
                     Globals.TriggeredEvents.Add(key);
@@ -241,10 +274,10 @@ public class Untolia : Game
             }
         }
     }
-    
+
     private bool HandleEvent(MapEvent ev)
     {
-        bool handled = false;
+        var handled = false;
 
         switch (ev.Type)
         {
@@ -261,6 +294,7 @@ public class Untolia : Game
                         Globals.GameFlags.Remove(ev.Flag);
                         Globals.Log.Info($"Event setFlag: '{ev.Flag}' = false");
                     }
+
                     handled = true;
 
                     if (_debugDraw)
@@ -276,6 +310,7 @@ public class Untolia : Game
                         Globals.UI.Add(msg);
                     }
                 }
+
                 break;
 
             case "showDialogue":
@@ -307,6 +342,7 @@ public class Untolia : Game
                         handled = true;
                     }
                 }
+
                 break;
 
             default:
@@ -318,7 +354,6 @@ public class Untolia : Game
     }
 
 
-    
     private void ShowTestMessage()
     {
         var messageBox = new MessageBox(
@@ -368,6 +403,7 @@ public class Untolia : Game
     {
         GraphicsDevice.Clear(Color.Black);
 
+        // World pass (with camera)
         _spriteBatch.Begin(transformMatrix: _camera.View, samplerState: SamplerState.PointClamp);
 
         DrawMap();
@@ -381,12 +417,18 @@ public class Untolia : Game
             DrawEventsDebug();
         }
 
+        _spriteBatch.End();
+
+        // UI pass (no camera transform)
+        _spriteBatch.Begin(samplerState: SamplerState.PointClamp);
+
         Globals.UI.Draw(_spriteBatch);
 
         _spriteBatch.End();
 
         base.Draw(gameTime);
     }
+
 
     private void DrawMap()
     {
@@ -409,8 +451,8 @@ public class Untolia : Game
         if (_debugPixel == null) return;
         if (_currentMap?.Portals == null || _currentMap.Portals.Count == 0) return;
 
-        var fillColor = new Color(0, 255, 0) * 0.18f;   // translucent green fill
-        var edgeColor = new Color(0, 220, 0) * 0.9f;    // bright green border
+        var fillColor = new Color(0, 255, 0) * 0.18f; // translucent green fill
+        var edgeColor = new Color(0, 220, 0) * 0.9f; // bright green border
 
         foreach (var portal in _currentMap.Portals)
         {
@@ -441,14 +483,14 @@ public class Untolia : Game
             // - One-time already triggered: gray
             // - Repeatable: cyan
             var key = $"{_currentMap.Id}:{ev.Id}";
-            bool already = ev.OneTime && Globals.TriggeredEvents.Contains(key);
+            var already = ev.OneTime && Globals.TriggeredEvents.Contains(key);
 
             var fill = ev.OneTime
-                ? (already ? new Color(150, 150, 150) * 0.16f : new Color(255, 235, 59) * 0.16f)
+                ? already ? new Color(150, 150, 150) * 0.16f : new Color(255, 235, 59) * 0.16f
                 : new Color(0, 255, 255) * 0.16f;
 
             var border = ev.OneTime
-                ? (already ? new Color(180, 180, 180) : new Color(255, 215, 0))
+                ? already ? new Color(180, 180, 180) : new Color(255, 215, 0)
                 : new Color(0, 220, 255);
 
             // Fill and outline
@@ -491,14 +533,12 @@ public class Untolia : Game
         var playerRect = new Rectangle((int)_player.Position.X, (int)_player.Position.Y, 16, 16);
 
         foreach (var p in _currentMap.Portals)
-        {
             if (p.Area.Intersects(playerRect))
             {
                 EnterPortal(p);
                 _portalCooldown = 0.25f; // basic debounce to avoid re-trigger
                 break;
             }
-        }
     }
 
     private void EnterPortal(Portal portal)
@@ -527,10 +567,10 @@ public class Untolia : Game
             return;
         }
 
-        int processed = 0;
+        var processed = 0;
         foreach (var ev in _currentMap.Events)
         {
-            if (!string.Equals(ev.When, "onEnter", System.StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(ev.When, "onEnter", StringComparison.OrdinalIgnoreCase))
                 continue;
 
             // Build a stable key per map+event
@@ -543,8 +583,9 @@ public class Untolia : Game
                 continue;
             }
 
-            bool handled = false;
-            Globals.Log.Debug($"ProcessOnEnterEvents: handling event id='{ev.Id}', type='{ev.Type}', oneTime={ev.OneTime}");
+            var handled = false;
+            Globals.Log.Debug(
+                $"ProcessOnEnterEvents: handling event id='{ev.Id}', type='{ev.Type}', oneTime={ev.OneTime}");
 
             switch (ev.Type)
             {
@@ -561,6 +602,7 @@ public class Untolia : Game
                             Globals.GameFlags.Remove(ev.Flag);
                             Globals.Log.Info($"Event setFlag: '{ev.Flag}' = false");
                         }
+
                         handled = true;
 
                         // Optional: visual confirmation if debug overlay is enabled
@@ -577,6 +619,7 @@ public class Untolia : Game
                             Globals.UI.Add(msg);
                         }
                     }
+
                     break;
 
                 case "showDialogue":
@@ -608,6 +651,7 @@ public class Untolia : Game
                             handled = true;
                         }
                     }
+
                     break;
 
                 default:
@@ -631,7 +675,6 @@ public class Untolia : Game
     }
 
 
-
     protected override void UnloadContent()
     {
         Assets.Dispose();
@@ -642,7 +685,7 @@ public class Untolia : Game
 
 public static class Extensions
 {
-    public static void Let<T>(this T? obj, System.Action<T> action) where T : class
+    public static void Let<T>(this T? obj, Action<T> action) where T : class
     {
         if (obj != null) action(obj);
     }

@@ -1,16 +1,10 @@
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-
 namespace Untolia.Core.RPG;
 
 public sealed class PrimaryStats
 {
-    public int Force { get; set; }
-    public int Focus { get; set; }
-    public int Resolve { get; set; }
-    public int Agility { get; set; }
-
-    public PrimaryStats() { }
+    public PrimaryStats()
+    {
+    }
 
     public PrimaryStats(int force, int focus, int resolve, int agility)
     {
@@ -20,13 +14,21 @@ public sealed class PrimaryStats
         Agility = agility;
     }
 
-    public PrimaryStats Clone() => new(Force, Focus, Resolve, Agility);
+    public int Force { get; set; }
+    public int Focus { get; set; }
+    public int Resolve { get; set; }
+    public int Agility { get; set; }
+
+    public PrimaryStats Clone()
+    {
+        return new PrimaryStats(Force, Focus, Resolve, Agility);
+    }
 }
 
 public sealed class Progression
 {
     public int Level { get; private set; } = 1;
-    public int Exp { get; private set; } = 0;
+    public int Exp { get; private set; }
 
     public int ExpToNext => 100 + (Level - 1) * 50;
 
@@ -41,37 +43,65 @@ public sealed class Progression
             Level++;
             leveled = true;
         }
+
         return leveled;
     }
 
-    internal void ForceLevelSet(int level) => Level = level;
+    internal void ForceLevelSet(int level)
+    {
+        Level = level;
+    }
 }
 
 public sealed class Vital
 {
-    public int Max { get; private set; }
-    public int Current { get; private set; }
-
     public Vital(int max)
     {
-        Max = System.Math.Max(1, max);
+        Max = Math.Max(1, max);
         Current = Max;
     }
 
-    public void Heal(int amount) => Current = System.Math.Min(Max, Current + System.Math.Max(0, amount));
-    public void Damage(int amount) => Current = System.Math.Max(0, Current - System.Math.Max(0, amount));
+    public int Max { get; private set; }
+    public int Current { get; private set; }
+
     public bool IsZero => Current <= 0;
+
+    public void Heal(int amount)
+    {
+        Current = Math.Min(Max, Current + Math.Max(0, amount));
+    }
+
+    public void Damage(int amount)
+    {
+        Current = Math.Max(0, Current - Math.Max(0, amount));
+    }
 
     public void SetMax(int max, bool refill)
     {
-        Max = System.Math.Max(1, max);
+        Max = Math.Max(1, max);
         if (refill) Current = Max;
-        else Current = System.Math.Min(Current, Max);
+        else Current = Math.Min(Current, Max);
     }
 }
 
 public sealed class PartyMember
 {
+    public PartyMember(string id, string name, PrimaryStats stats, int baseHp, int baseMp, int startLevel = 1)
+    {
+        Id = id;
+        Name = name;
+        BaseStats = stats.Clone();
+        Progress = new Progression();
+
+        // initialize vitals based on provided base values
+        HP = new Vital(baseHp);
+        MP = new Vital(baseMp);
+
+        if (startLevel > 1)
+            // set level directly; caller should have evaluated stats/HP/MP at target level already
+            Progress.ForceLevelSet(startLevel);
+    }
+
     public string Id { get; }
     public string Name { get; set; }
 
@@ -94,30 +124,12 @@ public sealed class PartyMember
     public string? ArmorId { get; set; }
     public string? TrinketId { get; set; }
 
-    public PartyMember(string id, string name, PrimaryStats stats, int baseHp, int baseMp, int startLevel = 1)
-    {
-        Id = id;
-        Name = name;
-        BaseStats = stats.Clone();
-        Progress = new Progression();
-
-        // initialize vitals based on provided base values
-        HP = new Vital(baseHp);
-        MP = new Vital(baseMp);
-
-        if (startLevel > 1)
-        {
-            // set level directly; caller should have evaluated stats/HP/MP at target level already
-            Progress.ForceLevelSet(startLevel);
-        }
-    }
-
 // Returns how many levels were gained (0 if none)
     public int GainExp(int amount)
     {
-        int before = Progress.Level;
+        var before = Progress.Level;
         var leveled = Progress.GainExp(amount);
-        int gained = Progress.Level - before;
+        var gained = Progress.Level - before;
         if (gained > 0) OnLevelUp(gained);
         return gained;
     }
@@ -132,13 +144,13 @@ public sealed class PartyMember
     // Recompute current stats and vitals from a CharacterDef at the current level
     public void RecomputeDerivedFromDef(CharacterDef def)
     {
-        int lvl = Progress.Level;
+        var lvl = Progress.Level;
 
         // Update primary stats from growth curves (if present), otherwise keep current
         if (def.Growth != null)
         {
-            BaseStats.Force   = CurveEval.EvalAtLevel(def.Growth.Force, lvl);
-            BaseStats.Focus   = CurveEval.EvalAtLevel(def.Growth.Focus, lvl);
+            BaseStats.Force = CurveEval.EvalAtLevel(def.Growth.Force, lvl);
+            BaseStats.Focus = CurveEval.EvalAtLevel(def.Growth.Focus, lvl);
             BaseStats.Resolve = CurveEval.EvalAtLevel(def.Growth.Resolve, lvl);
             BaseStats.Agility = CurveEval.EvalAtLevel(def.Growth.Agility, lvl);
 
@@ -148,10 +160,8 @@ public sealed class PartyMember
             if (newMaxMp < 0) newMaxMp = 0;
 
             // Keep current HP/MP within new maxima; optionally heal a bit here if you want
-            HP.SetMax(newMaxHp, refill: false);
-            MP.SetMax(newMaxMp, refill: false);
+            HP.SetMax(newMaxHp, false);
+            MP.SetMax(newMaxMp, false);
         }
     }
-
-    
 }

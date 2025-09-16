@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 
 namespace Untolia.Core.UI;
 
@@ -24,7 +23,7 @@ public sealed class SettingsMenu : Menu
     {
         // Left-side, full height panel with a nice margin (same style as GameMenu)
         var margin = 24f;
-        var panelWidth = (int)System.Math.Clamp(Globals.ScreenSize.X * 0.28f, 280f, 420f);
+        var panelWidth = (int)Math.Clamp(Globals.ScreenSize.X * 0.28f, 280f, 420f);
         var panelHeight = Globals.ScreenSize.Y - (int)(margin * 2);
         Size = new Vector2(panelWidth, panelHeight);
         Position = new Vector2(margin, margin);
@@ -55,13 +54,13 @@ public sealed class SettingsMenu : Menu
 
         // Items
         float y = headerRect.Bottom + 16;
-        float lineHeight = 36f;
+        var lineHeight = 36f;
         float leftPadding = panelRect.X + 24;
         float rightPadding = panelRect.Right - 24;
 
-        for (int i = 0; i < _items.Count; i++)
+        for (var i = 0; i < _items.Count; i++)
         {
-            var isSelected = (i == _selectedIndex);
+            var isSelected = i == _selectedIndex;
             var item = _items[i];
 
             // Separator before "Back"
@@ -73,7 +72,7 @@ public sealed class SettingsMenu : Menu
 
             if (isSelected)
             {
-                var highlightRect = new Rectangle(panelRect.X + 6, (int)(y - 6), panelRect.Width - 12, (int)(lineHeight));
+                var highlightRect = new Rectangle(panelRect.X + 6, (int)(y - 6), panelRect.Width - 12, (int)lineHeight);
                 spriteBatch.Draw(UIAssets.PixelTexture, highlightRect, new Color(90, 90, 120, 160));
                 var accent = new Rectangle(panelRect.X + 6, (int)(y - 6), 4, (int)lineHeight);
                 spriteBatch.Draw(UIAssets.PixelTexture, accent, Color.CornflowerBlue);
@@ -91,7 +90,8 @@ public sealed class SettingsMenu : Menu
         var hintSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, hintText);
         var hintRect = new Rectangle(panelRect.X + 6, panelRect.Bottom - 40, panelRect.Width - 12, 34);
         spriteBatch.Draw(UIAssets.PixelTexture, hintRect, new Color(30, 30, 30, 160));
-        var hintPos = new Vector2(panelRect.X + (panelRect.Width - hintSize.X) / 2f, hintRect.Y + (hintRect.Height - hintSize.Y) / 2f);
+        var hintPos = new Vector2(panelRect.X + (panelRect.Width - hintSize.X) / 2f,
+            hintRect.Y + (hintRect.Height - hintSize.Y) / 2f);
         spriteBatch.DrawStringSafe(UIAssets.DefaultFont, hintText, hintPos, Color.Gray);
     }
 
@@ -118,9 +118,7 @@ public sealed class SettingsMenu : Menu
     private void ShowAudioSettings()
     {
         var messageBox = new MessageBox(
-            "Audio settings coming soon!",
-            null,
-            UIPosition.Center
+            "Audio settings coming soon!"
         );
         Globals.UI.Add(messageBox);
     }
@@ -128,9 +126,7 @@ public sealed class SettingsMenu : Menu
     private void ShowVideoSettings()
     {
         var messageBox = new MessageBox(
-            "Video settings coming soon!",
-            null,
-            UIPosition.Center
+            "Video settings coming soon!"
         );
         Globals.UI.Add(messageBox);
     }
@@ -138,9 +134,7 @@ public sealed class SettingsMenu : Menu
     private void ShowControls()
     {
         var messageBox = new MessageBox(
-            "CONTROLS:\nWASD/Arrows: Move\nESC: Menu\nT: Test Message\nENTER/SPACE: Confirm",
-            null,
-            UIPosition.Center
+            "CONTROLS:\nWASD/Arrows: Move\nESC: Menu\nT: Test Message\nENTER/SPACE: Confirm"
         );
         Globals.UI.Add(messageBox);
     }

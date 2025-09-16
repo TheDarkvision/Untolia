@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Linq;
 
 namespace Untolia.Core.UI;
 
@@ -62,20 +61,18 @@ public sealed class GameMenu : Menu
 
         // Items
         float y = headerRect.Bottom + 16;
-        float lineHeight = 36f;
+        var lineHeight = 36f;
         float leftPadding = panelRect.X + 24;
         float rightPadding = panelRect.Right - 24;
 
-        for (int i = 0; i < _items.Count; i++)
+        for (var i = 0; i < _items.Count; i++)
         {
-            var isSelected = (i == _selectedIndex);
+            var isSelected = i == _selectedIndex;
             var item = _items[i];
 
             // Separator before certain items (grouping)
             if (i == 1 || i == 4) // after Resume, and after Settings (tweak as desired)
-            {
                 DrawSeparator(spriteBatch, leftPadding, rightPadding, y - 8);
-            }
 
             var itemText = item.Text;
             var textSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, itemText);
@@ -83,7 +80,7 @@ public sealed class GameMenu : Menu
             // Highlight bar on selection (accent color)
             if (isSelected)
             {
-                var highlightRect = new Rectangle(panelRect.X + 6, (int)(y - 6), panelRect.Width - 12, (int)(lineHeight));
+                var highlightRect = new Rectangle(panelRect.X + 6, (int)(y - 6), panelRect.Width - 12, (int)lineHeight);
                 spriteBatch.Draw(UIAssets.PixelTexture, highlightRect, new Color(90, 90, 120, 160));
                 // Left accent
                 var accent = new Rectangle(panelRect.X + 6, (int)(y - 6), 4, (int)lineHeight);
@@ -103,7 +100,8 @@ public sealed class GameMenu : Menu
         var hintSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, hintText);
         var hintRect = new Rectangle(panelRect.X + 6, panelRect.Bottom - 40, panelRect.Width - 12, 34);
         spriteBatch.Draw(UIAssets.PixelTexture, hintRect, new Color(30, 30, 30, 160));
-        var hintPos = new Vector2(panelRect.X + (panelRect.Width - hintSize.X) / 2f, hintRect.Y + (hintRect.Height - hintSize.Y) / 2f);
+        var hintPos = new Vector2(panelRect.X + (panelRect.Width - hintSize.X) / 2f,
+            hintRect.Y + (hintRect.Height - hintSize.Y) / 2f);
         spriteBatch.DrawStringSafe(UIAssets.DefaultFont, hintText, hintPos, Color.Gray);
     }
 
@@ -144,9 +142,7 @@ public sealed class GameMenu : Menu
     private void SaveGame()
     {
         var messageBox = new MessageBox(
-            "Game saved successfully!",
-            null,
-            UIPosition.Center
+            "Game saved successfully!"
         );
         Globals.UI.Add(messageBox);
     }
@@ -154,9 +150,7 @@ public sealed class GameMenu : Menu
     private void ExitToMainMenu()
     {
         var messageBox = new MessageBox(
-            "Exit to main menu functionality not implemented yet.",
-            null,
-            UIPosition.Center
+            "Exit to main menu functionality not implemented yet."
         );
         Globals.UI.Add(messageBox);
     }

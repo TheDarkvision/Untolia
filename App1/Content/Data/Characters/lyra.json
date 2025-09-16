@@ -3,25 +3,135 @@
   "name": "Lyra",
   "portrait": "Portraits/Lyra.png",
   "startingLevel": 1,
-  "baseStats": { "force": 4, "focus": 5, "resolve": 4, "agility": 7 },
+  "baseStats": {
+    "force": 4,
+    "focus": 5,
+    "resolve": 4,
+    "agility": 7
+  },
   "growth": {
     "model": "keyframes",
-    "force":   [ { "lvl": 1, "val": 4 }, { "lvl": 10, "val": 12 }, { "lvl": 20, "val": 22 } ],
-    "focus":   [ { "lvl": 1, "val": 5 }, { "lvl": 10, "val": 14 }, { "lvl": 20, "val": 24 } ],
-    "resolve": [ { "lvl": 1, "val": 4 }, { "lvl": 10, "val": 12 }, { "lvl": 20, "val": 20 } ],
-    "agility": [ { "lvl": 1, "val": 7 }, { "lvl": 10, "val": 20 }, { "lvl": 20, "val": 34 } ],
-    "hp":      [ { "lvl": 1, "val": 52 }, { "lvl": 10, "val": 180 }, { "lvl": 20, "val": 320 } ],
-    "mp":      [ { "lvl": 1, "val": 28 }, { "lvl": 10, "val": 100 }, { "lvl": 20, "val": 180 } ]
+    "force": [
+      {
+        "lvl": 1,
+        "val": 4
+      },
+      {
+        "lvl": 10,
+        "val": 12
+      },
+      {
+        "lvl": 20,
+        "val": 22
+      }
+    ],
+    "focus": [
+      {
+        "lvl": 1,
+        "val": 5
+      },
+      {
+        "lvl": 10,
+        "val": 14
+      },
+      {
+        "lvl": 20,
+        "val": 24
+      }
+    ],
+    "resolve": [
+      {
+        "lvl": 1,
+        "val": 4
+      },
+      {
+        "lvl": 10,
+        "val": 12
+      },
+      {
+        "lvl": 20,
+        "val": 20
+      }
+    ],
+    "agility": [
+      {
+        "lvl": 1,
+        "val": 7
+      },
+      {
+        "lvl": 10,
+        "val": 20
+      },
+      {
+        "lvl": 20,
+        "val": 34
+      }
+    ],
+    "hp": [
+      {
+        "lvl": 1,
+        "val": 52
+      },
+      {
+        "lvl": 10,
+        "val": 180
+      },
+      {
+        "lvl": 20,
+        "val": 320
+      }
+    ],
+    "mp": [
+      {
+        "lvl": 1,
+        "val": 28
+      },
+      {
+        "lvl": 10,
+        "val": 100
+      },
+      {
+        "lvl": 20,
+        "val": 180
+      }
+    ]
   },
-  "expCurve": { "model": "linear", "base": 100, "perLevel": 50 },
+  "expCurve": {
+    "model": "linear",
+    "base": 100,
+    "perLevel": 50
+  },
   "learnset": [
-    { "level": 1,  "ability": "aimed_shot" },
-    { "level": 4,  "ability": "quickstep" },
-    { "level": 8,  "ability": "pinning_arrow" },
-    { "level": 13, "ability": "windstep" },
-    { "level": 19, "ability": "falcon_eye" }
+    {
+      "level": 1,
+      "ability": "aimed_shot"
+    },
+    {
+      "level": 4,
+      "ability": "quickstep"
+    },
+    {
+      "level": 8,
+      "ability": "pinning_arrow"
+    },
+    {
+      "level": 13,
+      "ability": "windstep"
+    },
+    {
+      "level": 19,
+      "ability": "falcon_eye"
+    }
   ],
-  "elements": { "resist": ["wind"], "weak": ["earth"], "immune": [] },
+  "elements": {
+    "resist": [
+      "wind"
+    ],
+    "weak": [
+      "earth"
+    ],
+    "immune": []
+  },
   "equipment": {
     "weapon": "recurve_bow",
     "shield": null,
@@ -43,9 +153,20 @@
   },
   "role": {
     "battleStyle": "Mobile skirmisher: high initiative, single-target pressure, and control via slows and pins.",
-    "strengths": ["speed", "reliable accuracy", "position control"],
-    "weaknesses": ["fragile if focused", "limited burst without setup"]
+    "strengths": [
+      "speed",
+      "reliable accuracy",
+      "position control"
+    ],
+    "weaknesses": [
+      "fragile if focused",
+      "limited burst without setup"
+    ]
   },
-  "tags": ["human", "ranged", "skirmisher"],
+  "tags": [
+    "human",
+    "ranged",
+    "skirmisher"
+  ],
   "version": 1
 }

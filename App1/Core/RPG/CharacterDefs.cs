@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Untolia.Core.RPG;
 
 public sealed class CharacterDef
@@ -40,7 +38,11 @@ public sealed class GrowthDef
     public List<CurvePoint> Mp { get; set; } = new();
 }
 
-public sealed class CurvePoint { public int Lvl { get; set; } public int Val { get; set; } }
+public sealed class CurvePoint
+{
+    public int Lvl { get; set; }
+    public int Val { get; set; }
+}
 
 public sealed class ExpCurveDef
 {
@@ -48,14 +50,21 @@ public sealed class ExpCurveDef
     public int Base { get; set; } = 100;
     public int PerLevel { get; set; } = 50;
 
-    public int ExpToNext(int level) => Model switch
+    public int ExpToNext(int level)
     {
-        "linear" => Base + (level - 1) * PerLevel,
-        _ => Base + (level - 1) * PerLevel
-    };
+        return Model switch
+        {
+            "linear" => Base + (level - 1) * PerLevel,
+            _ => Base + (level - 1) * PerLevel
+        };
+    }
 }
 
-public sealed class LearnDef { public int Level { get; set; } public string Ability { get; set; } = ""; }
+public sealed class LearnDef
+{
+    public int Level { get; set; }
+    public string Ability { get; set; } = "";
+}
 
 // New: extra sections
 

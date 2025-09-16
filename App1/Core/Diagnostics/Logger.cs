@@ -1,18 +1,21 @@
-using System;
-using System.IO;
 using System.Text;
 
 namespace Untolia.Core.Diagnostics;
 
-public enum LogLevel { Trace, Debug, Info, Warn, Error }
+public enum LogLevel
+{
+    Trace,
+    Debug,
+    Info,
+    Warn,
+    Error
+}
 
 public sealed class Logger
 {
-    private readonly object _sync = new();
-    private readonly string _logFilePath;
     private readonly bool _echoToConsole;
-
-    public LogLevel MinimumLevel { get; set; } = LogLevel.Debug;
+    private readonly string _logFilePath;
+    private readonly object _sync = new();
 
     public Logger(string logFilePath, bool echoToConsole = true)
     {
@@ -25,14 +28,38 @@ public sealed class Logger
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
         }
-        catch { /* ignore */ }
+        catch
+        {
+            /* ignore */
+        }
     }
 
-    public void Trace(string msg) => Write(LogLevel.Trace, msg);
-    public void Debug(string msg) => Write(LogLevel.Debug, msg);
-    public void Info(string msg)  => Write(LogLevel.Info,  msg);
-    public void Warn(string msg)  => Write(LogLevel.Warn,  msg);
-    public void Error(string msg) => Write(LogLevel.Error, msg);
+    public LogLevel MinimumLevel { get; set; } = LogLevel.Debug;
+
+    public void Trace(string msg)
+    {
+        Write(LogLevel.Trace, msg);
+    }
+
+    public void Debug(string msg)
+    {
+        Write(LogLevel.Debug, msg);
+    }
+
+    public void Info(string msg)
+    {
+        Write(LogLevel.Info, msg);
+    }
+
+    public void Warn(string msg)
+    {
+        Write(LogLevel.Warn, msg);
+    }
+
+    public void Error(string msg)
+    {
+        Write(LogLevel.Error, msg);
+    }
 
     public void Error(Exception ex, string context = "")
     {
@@ -54,16 +81,20 @@ public sealed class Logger
             {
                 File.AppendAllText(_logFilePath, line + Environment.NewLine);
             }
-            catch { /* ignore */ }
+            catch
+            {
+                /* ignore */
+            }
 
             if (_echoToConsole)
-            {
                 try
                 {
                     Console.WriteLine(line);
                 }
-                catch { /* ignore */ }
-            }
+                catch
+                {
+                    /* ignore */
+                }
         }
     }
 }

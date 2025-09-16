@@ -1,16 +1,12 @@
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Untolia.Core.UI;
 
 public sealed class UISystem
 {
     private readonly List<UIElement> _elements = new();
-    private readonly List<UIElement> _toRemove = new();
     private readonly List<UIElement> _toAdd = new();
+    private readonly List<UIElement> _toRemove = new();
     private UIElement? _focusedElement;
 
     // Public property to access elements safely
@@ -53,20 +49,19 @@ public sealed class UISystem
 
         // Update all elements - snapshot to avoid modification during enumeration
         foreach (var element in _elements.ToList())
-        {
             if (element.IsVisible)
                 element.Update(deltaTime);
-        }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
         foreach (var element in _elements.ToList())
-        {
             if (element.IsVisible)
                 element.Draw(spriteBatch);
-        }
     }
 
-    public bool HasModalElements() => _elements.Any(e => e.IsModal && e.IsVisible);
+    public bool HasModalElements()
+    {
+        return _elements.Any(e => e.IsModal && e.IsVisible);
+    }
 }

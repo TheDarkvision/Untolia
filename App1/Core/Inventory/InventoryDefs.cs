@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Untolia.Core.Inventory;
 
 public enum ItemCategory
@@ -20,29 +18,29 @@ public sealed class InventoryItemDef
 
 public sealed class InventoryStack
 {
-    public string ItemId { get; }
-    public int Quantity { get; private set; }
-
     public InventoryStack(string itemId, int qty)
     {
         ItemId = itemId;
         Quantity = qty;
     }
 
+    public string ItemId { get; }
+    public int Quantity { get; private set; }
+
+    public bool IsEmpty => Quantity <= 0;
+
     public int Add(int qty, int limitPerStack)
     {
-        var canAdd = System.Math.Max(0, limitPerStack - Quantity);
-        var added = System.Math.Min(canAdd, qty);
+        var canAdd = Math.Max(0, limitPerStack - Quantity);
+        var added = Math.Min(canAdd, qty);
         Quantity += added;
         return added;
     }
 
     public int Remove(int qty)
     {
-        var removed = System.Math.Min(Quantity, qty);
+        var removed = Math.Min(Quantity, qty);
         Quantity -= removed;
         return removed;
     }
-
-    public bool IsEmpty => Quantity <= 0;
 }

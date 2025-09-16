@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Untolia.Core.Inventory;
 
 public sealed class InventoryService
 {
     // Static definitions by id
     private readonly Dictionary<string, InventoryItemDef> _defs = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<InventoryStack> _equipment = new(); // Equipment
 
     // Stacks keyed by category
-    private readonly List<InventoryStack> _items = new();      // Items
-    private readonly List<InventoryStack> _equipment = new();  // Equipment
-    private readonly List<InventoryStack> _keys = new();       // Key Items
+    private readonly List<InventoryStack> _items = new(); // Items
+    private readonly List<InventoryStack> _keys = new(); // Key Items
 
     public IEnumerable<InventoryItemDef> Definitions => _defs.Values;
 
@@ -24,15 +20,21 @@ public sealed class InventoryService
         _defs[def.Id] = def;
     }
 
-    public InventoryItemDef? GetDef(string id) => _defs.TryGetValue(id, out var d) ? d : null;
-
-    private List<InventoryStack> GetList(ItemCategory cat) => cat switch
+    public InventoryItemDef? GetDef(string id)
     {
-        ItemCategory.Items => _items,
-        ItemCategory.Equipment => _equipment,
-        ItemCategory.KeyItems => _keys,
-        _ => _items
-    };
+        return _defs.TryGetValue(id, out var d) ? d : null;
+    }
+
+    private List<InventoryStack> GetList(ItemCategory cat)
+    {
+        return cat switch
+        {
+            ItemCategory.Items => _items,
+            ItemCategory.Equipment => _equipment,
+            ItemCategory.KeyItems => _keys,
+            _ => _items
+        };
+    }
 
     // Add items (observing stack limits); returns actually added quantity
     public int Add(string itemId, int qty)
@@ -46,13 +48,13 @@ public sealed class InventoryService
         foreach (var st in list.Where(s => s.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase)))
         {
             if (remaining <= 0) break;
-            remaining -= st.Add(remaining, System.Math.Max(1, def.StackLimit));
+            remaining -= st.Add(remaining, Math.Max(1, def.StackLimit));
         }
 
         // Create new stacks while needed
         while (remaining > 0)
         {
-            var take = System.Math.Min(remaining, System.Math.Max(1, def.StackLimit));
+            var take = Math.Min(remaining, Math.Max(1, def.StackLimit));
             list.Add(new InventoryStack(itemId, take));
             remaining -= take;
         }
@@ -102,7 +104,10 @@ public sealed class InventoryService
         return list.Where(s => s.ItemId.Equals(itemId, StringComparison.OrdinalIgnoreCase)).Sum(s => s.Quantity);
     }
 
-    public bool Has(string itemId, int qty = 1) => CountOf(itemId) >= qty;
+    public bool Has(string itemId, int qty = 1)
+    {
+        return CountOf(itemId) >= qty;
+    }
 
     // Use/Equip hooks (game-specific). Returns true if consumed/handled.
     public bool Use(string itemId)
@@ -122,6 +127,7 @@ public sealed class InventoryService
                 // Usually not consumed
                 return false;
         }
+
         return false;
     }
 
@@ -143,7 +149,7 @@ public sealed class InventoryService
             var total = g.Sum(s => s.Quantity);
             while (total > 0)
             {
-                var take = System.Math.Min(total, def.StackLimit);
+                var take = Math.Min(total, def.StackLimit);
                 list.Add(new InventoryStack(g.Key, take));
                 total -= take;
             }

@@ -6,5 +6,8 @@
   "stacking": "refresh",
   "element": "fire",
   "blocks": [],
-  "tags": ["dot", "fire"]
+  "tags": [
+    "dot",
+    "fire"
+  ]
 }

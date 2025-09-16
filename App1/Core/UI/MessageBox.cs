@@ -1,8 +1,7 @@
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Text;
 
 namespace Untolia.Core.UI;
 
@@ -19,20 +18,19 @@ public enum UIPosition
 
 public sealed class MessageBox : UIElement
 {
-    private readonly string _message;
-    private readonly string _title;
-    private readonly Action? _onClose;
-    private KeyboardState _previousKeyboard;
-
-    // Prevent immediate close from the same key press and rapid repeats
-    private float _closeCooldown = 0.15f;
-
     // Layout/style
     private const int MarginScreen = 24;
     private const int PaddingBox = 16;
     private const int HeaderHeight = 42;
     private const int FooterHeight = 32;
     private const int BorderThickness = 3;
+    private readonly string _message;
+    private readonly Action? _onClose;
+    private readonly string _title;
+
+    // Prevent immediate close from the same key press and rapid repeats
+    private float _closeCooldown = 0.15f;
+    private KeyboardState _previousKeyboard;
 
     // Cached wrapped text
     private string? _wrappedMessage;
@@ -66,8 +64,8 @@ public sealed class MessageBox : UIElement
     private void CalculateSizeAndWrap()
     {
         // Max width ~ 60% of screen, min width 280
-        float maxWidth = System.Math.Max(280f, Globals.ScreenSize.X * 0.6f);
-        float contentMaxWidth = maxWidth - PaddingBox * 2 - BorderThickness * 2;
+        var maxWidth = Math.Max(280f, Globals.ScreenSize.X * 0.6f);
+        var contentMaxWidth = maxWidth - PaddingBox * 2 - BorderThickness * 2;
 
         // Wrap message to fit width
         _wrappedMessage = WrapText(UIAssets.DefaultFont, _message, contentMaxWidth);
@@ -76,24 +74,24 @@ public sealed class MessageBox : UIElement
         var msgSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, _wrappedMessage);
 
         // Compute final size including header/footer/padding/border
-        float width = System.Math.Max(280f, msgSize.X + PaddingBox * 2 + BorderThickness * 2);
-        float height = HeaderHeight + PaddingBox + msgSize.Y + PaddingBox + FooterHeight + BorderThickness * 2;
+        var width = Math.Max(280f, msgSize.X + PaddingBox * 2 + BorderThickness * 2);
+        var height = HeaderHeight + PaddingBox + msgSize.Y + PaddingBox + FooterHeight + BorderThickness * 2;
 
         // Cap height to 70% of screen; if overflow, re-wrap to reduced width/height
-        float maxHeight = Globals.ScreenSize.Y * 0.7f;
+        var maxHeight = Globals.ScreenSize.Y * 0.7f;
         if (height > maxHeight)
         {
             // If too tall, reduce width slightly to allow more wrapping and reduce height
-            contentMaxWidth = System.Math.Max(220f, contentMaxWidth * 0.9f);
+            contentMaxWidth = Math.Max(220f, contentMaxWidth * 0.9f);
             _wrappedMessage = WrapText(UIAssets.DefaultFont, _message, contentMaxWidth);
             msgSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, _wrappedMessage);
-            width = System.Math.Max(280f, msgSize.X + PaddingBox * 2 + BorderThickness * 2);
+            width = Math.Max(280f, msgSize.X + PaddingBox * 2 + BorderThickness * 2);
             height = HeaderHeight + PaddingBox + msgSize.Y + PaddingBox + FooterHeight + BorderThickness * 2;
-            height = System.Math.Min(height, maxHeight);
+            height = Math.Min(height, maxHeight);
         }
 
         // Also cap width to 90% of screen
-        float capWidth = Globals.ScreenSize.X * 0.9f;
+        var capWidth = Globals.ScreenSize.X * 0.9f;
         if (width > capWidth) width = capWidth;
 
         Size = new Vector2(width, height);
@@ -105,7 +103,7 @@ public sealed class MessageBox : UIElement
         var screenHeight = Globals.ScreenSize.Y;
         var margin = MarginScreen;
 
-        Position = position switch
+        var pos = position switch
         {
             UIPosition.Center => new Vector2(
                 (screenWidth - Size.X) / 2f,
@@ -128,7 +126,16 @@ public sealed class MessageBox : UIElement
                 screenHeight - Size.Y - margin),
             _ => new Vector2((screenWidth - Size.X) / 2f, (screenHeight - Size.Y) / 2f)
         };
+
+        // Safety clamp: ensure panel stays fully on-screen
+        var maxX = Math.Max(0f, screenWidth - Size.X - margin);
+        var maxY = Math.Max(0f, screenHeight - Size.Y - margin);
+        pos.X = MathHelper.Clamp(pos.X, margin, maxX);
+        pos.Y = MathHelper.Clamp(pos.Y, margin, maxY);
+
+        Position = pos;
     }
+
 
     public override void Update(float deltaTime)
     {
@@ -155,13 +162,16 @@ public sealed class MessageBox : UIElement
     public override void Draw(SpriteBatch spriteBatch)
     {
         // Dim overlay
-        spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(0, 0, Globals.ScreenSize.X, Globals.ScreenSize.Y), new Color(0, 0, 0, 120));
+        spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(0, 0, Globals.ScreenSize.X, Globals.ScreenSize.Y),
+            new Color(0, 0, 0, 120));
 
         // Panel rects
         var panelRect = new Rectangle((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
-        var innerRect = new Rectangle(panelRect.X + BorderThickness, panelRect.Y + BorderThickness, panelRect.Width - BorderThickness * 2, panelRect.Height - BorderThickness * 2);
+        var innerRect = new Rectangle(panelRect.X + BorderThickness, panelRect.Y + BorderThickness,
+            panelRect.Width - BorderThickness * 2, panelRect.Height - BorderThickness * 2);
         var headerRect = new Rectangle(innerRect.X + 6, innerRect.Y + 6, innerRect.Width - 12, HeaderHeight - 12);
-        var footerRect = new Rectangle(innerRect.X + 6, innerRect.Bottom - FooterHeight + 6, innerRect.Width - 12, FooterHeight - 12);
+        var footerRect = new Rectangle(innerRect.X + 6, innerRect.Bottom - FooterHeight + 6, innerRect.Width - 12,
+            FooterHeight - 12);
 
         // Background and border
         spriteBatch.Draw(UIAssets.PixelTexture, panelRect, Color.Black * 0.85f);
@@ -190,7 +200,8 @@ public sealed class MessageBox : UIElement
         spriteBatch.Draw(UIAssets.PixelTexture, footerRect, new Color(30, 30, 30, 160));
         var instruction = "Enter/Space/Esc: Close";
         var instSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, instruction);
-        var instPos = new Vector2(footerRect.X + (footerRect.Width - instSize.X) / 2f, footerRect.Y + (footerRect.Height - instSize.Y) / 2f);
+        var instPos = new Vector2(footerRect.X + (footerRect.Width - instSize.X) / 2f,
+            footerRect.Y + (footerRect.Height - instSize.Y) / 2f);
         spriteBatch.DrawStringSafe(UIAssets.DefaultFont, instruction, instPos, Color.Gray);
     }
 
@@ -210,13 +221,14 @@ public sealed class MessageBox : UIElement
 
         var words = text.Replace("\r", "").Split('\n');
         var sb = new StringBuilder();
-        for (int i = 0; i < words.Length; i++)
+        for (var i = 0; i < words.Length; i++)
         {
             // Each entry in 'words' is a line split by '\n'; wrap each line separately
             var line = words[i];
             sb.Append(WrapSingleLine(font, line, maxLineWidth));
             if (i < words.Length - 1) sb.Append('\n');
         }
+
         return sb.ToString();
     }
 
@@ -224,7 +236,7 @@ public sealed class MessageBox : UIElement
     {
         var words = text.Split(' ');
         var sb = new StringBuilder();
-        string current = "";
+        var current = "";
         foreach (var w in words)
         {
             var test = string.IsNullOrEmpty(current) ? w : current + " " + w;
@@ -248,6 +260,7 @@ public sealed class MessageBox : UIElement
                 }
             }
         }
+
         if (!string.IsNullOrEmpty(current))
             sb.Append(current);
         return sb.ToString();

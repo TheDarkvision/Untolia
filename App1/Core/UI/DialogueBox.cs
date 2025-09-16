@@ -6,16 +6,16 @@ namespace Untolia.Core.UI;
 
 public sealed class DialogueBox : UIElement
 {
+    private const float InputCooldownSeconds = 0.18f; // adjust to taste
     private readonly Queue<DialogueLine> _lines = new();
     private readonly Action? _onComplete;
     private DialogueLine? _currentLine;
+
+    // Debounce to prevent advancing multiple lines per key press/hold
+    private float _inputCooldown;
     private KeyboardState _previousKeyboard;
     private int _revealedChars;
     private float _typewriterTimer;
-
-    // Debounce to prevent advancing multiple lines per key press/hold
-    private float _inputCooldown = 0f;
-    private const float InputCooldownSeconds = 0.18f; // adjust to taste
 
     public DialogueBox(IEnumerable<DialogueLine> dialogue, Action? onComplete = null,
         UIPosition position = UIPosition.Bottom)
@@ -31,14 +31,14 @@ public sealed class DialogueBox : UIElement
         NextLine();
     }
 
+    public bool IsTyping => _currentLine != null && _revealedChars < _currentLine.Text.Length;
+    public float TypewriterSpeed { get; set; } = 30f; // characters per second
+
     public override void OnAdded()
     {
         _previousKeyboard = Keyboard.GetState();
         _inputCooldown = 0.12f; // small delay after opening
     }
-
-    public bool IsTyping => _currentLine != null && _revealedChars < _currentLine.Text.Length;
-    public float TypewriterSpeed { get; set; } = 30f; // characters per second
 
     private void SetupBox(UIPosition position)
     {
@@ -160,7 +160,9 @@ public sealed class DialogueLine
         Text = text;
     }
 
-    public DialogueLine(string text) : this("", text) { }
+    public DialogueLine(string text) : this("", text)
+    {
+    }
 
     public string Speaker { get; }
     public string Text { get; }

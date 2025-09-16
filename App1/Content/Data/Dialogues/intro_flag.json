@@ -1,5 +1,14 @@
 [
-  { "speaker": "System", "text": "Welcome to the Forest." },
-  { "speaker": "Guide", "text": "Your journey begins here. Stay alert." },
-  { "speaker": "Guide", "text": "Press M to open the menu, F3 to toggle debug overlays." }
+  {
+    "speaker": "System",
+    "text": "Welcome to the Forest."
+  },
+  {
+    "speaker": "Guide",
+    "text": "Your journey begins here. Stay alert."
+  },
+  {
+    "speaker": "Guide",
+    "text": "Press M to open the menu, F3 to toggle debug overlays."
+  }
 ]

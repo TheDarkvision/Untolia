@@ -1,11 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-
-using Untolia.Core.UI;
-using Untolia.Core.RPG;
-using Untolia.Core.Inventory;
 using Untolia.Core.Diagnostics;
+using Untolia.Core.Inventory;
+using Untolia.Core.RPG;
+using Untolia.Core.UI;
 
 namespace Untolia.Core;
 
@@ -13,7 +12,7 @@ public static class Globals
 {
     public const int TileSize = 16;
 
-    public static int GoldAmount = 0; 
+    public static int GoldAmount = 0;
 
     public static GraphicsDevice GraphicsDevice = null!;
     public static SpriteBatch SpriteBatch = null!;
@@ -24,7 +23,13 @@ public static class Globals
     public static ContentManager Content = null!;
 
     // Logger (writes to Logs/untolia.log and echoes to console)
-    public static readonly Logger Log = new(System.IO.Path.Combine(System.AppContext.BaseDirectory, "Logs", "untolia.log"), echoToConsole: true);
+    public static readonly Logger Log = new(Path.Combine(AppContext.BaseDirectory, "Logs", "untolia.log"), true);
+
+    // Simple game flags for events
+    public static readonly HashSet<string> GameFlags = new();
+
+    // Track triggered events across the game session (keys like "MapId:EventId")
+    public static readonly HashSet<string> TriggeredEvents = new();
 
     // UI System
     public static UISystem UI { get; } = new();
@@ -37,10 +42,4 @@ public static class Globals
 
     // Global Inventory
     public static InventoryService Inventory { get; } = new();
-    
-    // Simple game flags for events
-    public static readonly System.Collections.Generic.HashSet<string> GameFlags = new();
-
-    // Track triggered events across the game session (keys like "MapId:EventId")
-    public static readonly System.Collections.Generic.HashSet<string> TriggeredEvents = new();
 }

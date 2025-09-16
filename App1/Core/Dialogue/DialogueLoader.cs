@@ -1,10 +1,6 @@
 // Untolia.Core/Dialogue/DialogueLoader.cs
-using System;
-using System.Collections.Generic;
-using System.IO;
+
 using System.Text.Json;
-using Untolia.Core;
-using Untolia.Core.RPG;
 using Untolia.Core.UI;
 
 namespace Untolia.Core.Dialogue;
@@ -30,9 +26,10 @@ public static class DialogueLoader
             return Array.Empty<DialogueLine>();
 
         var runtimePath = Path.Combine(AppContext.BaseDirectory, "Content", "Data", "Dialogues", $"{key}.json");
-        var devPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Content", "Data", "Dialogues", $"{key}.json"));
+        var devPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "Content", "Data",
+            "Dialogues", $"{key}.json"));
 
-        string? path = File.Exists(runtimePath) ? runtimePath : (File.Exists(devPath) ? devPath : null);
+        var path = File.Exists(runtimePath) ? runtimePath : File.Exists(devPath) ? devPath : null;
         if (path == null)
         {
             Globals.Log.Warn($"DialogueLoader: dialogue file not found for key '{key}'");
@@ -42,7 +39,7 @@ public static class DialogueLoader
         try
         {
             var json = File.ReadAllText(path);
-            var list = JsonSerializer.Deserialize<List<DialogueEntry>>(json, Options) ?? new();
+            var list = JsonSerializer.Deserialize<List<DialogueEntry>>(json, Options) ?? new List<DialogueEntry>();
             var lines = new List<DialogueLine>(list.Count);
             foreach (var e in list)
             {
@@ -50,6 +47,7 @@ public static class DialogueLoader
                 var text = e.Text ?? "";
                 lines.Add(new DialogueLine(speaker, text));
             }
+
             return lines.ToArray();
         }
         catch (Exception ex)

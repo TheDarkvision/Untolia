@@ -6,15 +6,15 @@ namespace Untolia.Core.UI;
 
 public abstract class Menu : UIElement
 {
+    private const float NavCooldownSeconds = 0.14f; // between Up/Down moves
+    private const float SelectCooldownSeconds = 0.18f; // between Enter/Escape
     protected readonly List<MenuItem> _items = new();
-    protected int _selectedIndex;
-    protected KeyboardState _previousKeyboard; // was private
 
     // Debounce timers
-    protected float _navCooldown = 0f;      // was private
-    protected float _selectCooldown = 0f;   // was private
-    private const float NavCooldownSeconds = 0.14f;    // between Up/Down moves
-    private const float SelectCooldownSeconds = 0.18f; // between Enter/Escape
+    protected float _navCooldown; // was private
+    protected KeyboardState _previousKeyboard; // was private
+    protected float _selectCooldown; // was private
+    protected int _selectedIndex;
 
     public Menu()
     {

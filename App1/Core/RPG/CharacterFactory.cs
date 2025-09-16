@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Untolia.Core.RPG;
 
 public static class CharacterFactory
@@ -7,7 +5,7 @@ public static class CharacterFactory
     // Creates a PartyMember from a CharacterDef by evaluating growth curves at the target level.
     public static PartyMember CreateFromDef(CharacterDef def, int? levelOverride = null)
     {
-        int level = levelOverride ?? def.StartingLevel;
+        var level = levelOverride ?? def.StartingLevel;
         if (level < 1) level = 1;
 
         // Evaluate primary stats at level
@@ -16,17 +14,17 @@ public static class CharacterFactory
             Force = CurveEval.EvalAtLevel(def.Growth.Force, level),
             Focus = CurveEval.EvalAtLevel(def.Growth.Focus, level),
             Resolve = CurveEval.EvalAtLevel(def.Growth.Resolve, level),
-            Agility = CurveEval.EvalAtLevel(def.Growth.Agility, level),
+            Agility = CurveEval.EvalAtLevel(def.Growth.Agility, level)
         };
 
         // Evaluate vitals at level
-        int maxHp = CurveEval.EvalAtLevel(def.Growth.Hp, level);
-        int maxMp = CurveEval.EvalAtLevel(def.Growth.Mp, level);
+        var maxHp = CurveEval.EvalAtLevel(def.Growth.Hp, level);
+        var maxMp = CurveEval.EvalAtLevel(def.Growth.Mp, level);
         if (maxHp <= 0) maxHp = 1;
         if (maxMp < 0) maxMp = 0;
 
         // Build the runtime PartyMember
-        var member = new PartyMember(def.Id, def.Name, stats, maxHp, maxMp, startLevel: level)
+        var member = new PartyMember(def.Id, def.Name, stats, maxHp, maxMp, level)
         {
             Portrait = def.Portrait
         };

@@ -17,26 +17,33 @@ public abstract class UIElement
     public Rectangle Bounds => new((int)Position.X, (int)Position.Y, (int)Size.X, (int)Size.Y);
 
     // Allow elements to prime their input state when added to UI
-    public virtual void OnAdded() { }
+    public virtual void OnAdded()
+    {
+    }
 
-    public virtual void Update(float deltaTime) { }
+    public virtual void Update(float deltaTime)
+    {
+    }
+
     public abstract void Draw(SpriteBatch spriteBatch);
 
     protected void DrawBackground(SpriteBatch spriteBatch)
     {
         var bounds = Bounds;
-        
+
         // Background
         spriteBatch.Draw(UIAssets.PixelTexture, bounds, BackgroundColor);
-        
+
         // Border
         if (BorderThickness > 0)
         {
             var t = BorderThickness;
             spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.X, bounds.Y, bounds.Width, t), BorderColor);
-            spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.X, bounds.Bottom - t, bounds.Width, t), BorderColor);
+            spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.X, bounds.Bottom - t, bounds.Width, t),
+                BorderColor);
             spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.X, bounds.Y, t, bounds.Height), BorderColor);
-            spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.Right - t, bounds.Y, t, bounds.Height), BorderColor);
+            spriteBatch.Draw(UIAssets.PixelTexture, new Rectangle(bounds.Right - t, bounds.Y, t, bounds.Height),
+                BorderColor);
         }
     }
 }
