@@ -1,0 +1,21 @@
+{
+  "id": "fireball",
+  "name": "Fireball",
+  "type": "spell",
+  "target": "enemy-single",
+  "cost": { "mp": 8 },
+  "power": 40,
+  "element": "fire",
+  "scaling": [
+    { "stat": "focus", "ratio": 1.2 },
+    { "stat": "resolve", "ratio": 0.3 }
+  ],
+  "hitRate": 1.0,
+  "crit": { "chance": 0.05, "multiplier": 1.5 },
+  "effects": [
+    { "applyStatus": "burn", "chance": 0.25, "durationTurns": 3 }
+  ],
+  "tags": ["magic", "fire", "ranged"],
+  "descriptionKey": "ability.fireball.desc",
+  "version": 1
+}

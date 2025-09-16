@@ -1,0 +1,45 @@
+{
+  "id": "Forest01",
+  "size": { "width": 1440, "height": 900 },
+  "tileSize": 16,
+
+  "layers": {
+    "background": "layer_background.png",
+    "overhead": "layer_overhead.png"
+  },
+
+  "masks": {
+    "collision": "mask_collision.png",
+    "encounters": "mask_encounters.png",
+    "lighting": "mask_lighting.png"
+  },
+
+  "npcs": [
+    { "id": "old_man", "texture": "npcs/old_man.png", "x": 320, "y": 180, "dialogueKey": "old_man_hello" }
+  ],
+
+  "portals": [
+    { "id": "to_house", "x": 640, "y": 360, "width": 32, "height": 48,
+      "targetMap": "House01", "targetSpawn": { "x": 128, "y": 140 } }
+  ],
+
+  "events": [
+    { "id": "intro_flag", "type": "setFlag", "when": "onEnter", "flag": "intro_seen", "value": true }
+  ],
+
+  "encounters": {
+    "enabled": true,
+    "rate": 0.05,
+    "table": [
+      { "id": "wolf", "weight": 4 },
+      { "id": "slime", "weight": 6 }
+    ]
+  },
+
+  "lighting": {
+    "ambient": "#A0A0A0",
+    "emissiveTextures": []
+  },
+
+  "playerSpawn": { "x": 100, "y": 100 }
+}

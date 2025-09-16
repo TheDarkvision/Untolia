@@ -1,0 +1,6 @@
+{
+  "id": "ether",
+  "name": "Ether",
+  "description": "Restores a small amount of MP.",
+  "stackLimit": 99
+}

@@ -1,0 +1,51 @@
+{
+  "id": "thalen",
+  "name": "Thalen",
+  "portrait": "Portraits/Thalen.png",
+  "startingLevel": 1,
+  "baseStats": { "force": 3, "focus": 7, "resolve": 6, "agility": 4 },
+  "growth": {
+    "model": "keyframes",
+    "force":   [ { "lvl": 1, "val": 3 }, { "lvl": 10, "val": 8 },  { "lvl": 20, "val": 14 } ],
+    "focus":   [ { "lvl": 1, "val": 7 }, { "lvl": 10, "val": 20 }, { "lvl": 20, "val": 36 } ],
+    "resolve": [ { "lvl": 1, "val": 6 }, { "lvl": 10, "val": 18 }, { "lvl": 20, "val": 30 } ],
+    "agility": [ { "lvl": 1, "val": 4 }, { "lvl": 10, "val": 12 }, { "lvl": 20, "val": 20 } ],
+    "hp":      [ { "lvl": 1, "val": 48 }, { "lvl": 10, "val": 160 }, { "lvl": 20, "val": 280 } ],
+    "mp":      [ { "lvl": 1, "val": 36 }, { "lvl": 10, "val": 140 }, { "lvl": 20, "val": 260 } ]
+  },
+  "expCurve": { "model": "linear", "base": 100, "perLevel": 50 },
+  "learnset": [
+    { "level": 1,  "ability": "spark" },
+    { "level": 3,  "ability": "ward" },
+    { "level": 6,  "ability": "chain_bolt" },
+    { "level": 12, "ability": "aegis" },
+    { "level": 18, "ability": "arc_lance" }
+  ],
+  "elements": { "resist": ["lightning"], "weak": ["shadow"], "immune": [] },
+  "equipment": {
+    "weapon": "channel_staff",
+    "shield": null,
+    "armor": "scholar_robe",
+    "trinket": "glyph_ring"
+  },
+  "appearance": {
+    "age": "late-20s",
+    "build": "spare, steady-handed",
+    "hair": "black, cropped, a white streak at temple",
+    "eyes": "steel-blue, reflective",
+    "skin": "pale from long nights at the bench",
+    "attire": "ink-stained robe with copper runic filaments and a stormglass pendant"
+  },
+  "lore": {
+    "origin": "",
+    "motivation": "Seeks to realign ward-light to repair what blackfire has burned away, whatever the personal cost.",
+    "symbol": "A broken astrolabe tooth he keeps in his pocket—reminder that precision fails without humility."
+  },
+  "role": {
+    "battleStyle": "Backline caster: chaining lightning for multi-target pressure and projecting protective wards.",
+    "strengths": ["high MP pool", "area control", "party shielding"],
+    "weaknesses": ["low physical power", "requires positioning and timing"]
+  },
+  "tags": ["human", "caster", "backline"],
+  "version": 1
+}

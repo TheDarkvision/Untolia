@@ -13,6 +13,48 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Data/Abilities/fireball.json
+/copy:Data/Abilities/fireball.json
+
+#begin Data/Characters/caelen.json
+/copy:Data/Characters/caelen.json
+
+#begin Data/Characters/lyra.json
+/copy:Data/Characters/lyra.json
+
+#begin Data/Characters/thalen.json
+/copy:Data/Characters/thalen.json
+
+#begin Data/Dialogues/intro_flag.json
+/copy:Data/Dialogues/intro_flag.json
+
+#begin Data/Items/Consumables/ether_small.json
+/copy:Data/Items/Consumables/ether_small.json
+
+#begin Data/Items/Consumables/potion_small.json
+/copy:Data/Items/Consumables/potion_small.json
+
+#begin Data/Items/Equipment/kite_shield.json
+/copy:Data/Items/Equipment/kite_shield.json
+
+#begin Data/Items/Equipment/steel_longsword.json
+/copy:Data/Items/Equipment/steel_longsword.json
+
+#begin Data/Items/Key/rusty_key.json
+/copy:Data/Items/Key/rusty_key.json
+
+#begin Data/Items/Key/shard_of_light.json
+/copy:Data/Items/Key/shard_of_light.json
+
+#begin Data/Quests/Main/c01-p01.json
+/copy:Data/Quests/Main/c01-p01.json
+
+#begin Data/Quests/Side/s001.json
+/copy:Data/Quests/Side/s001.json
+
+#begin Data/Status/burn.json
+/copy:Data/Status/burn.json
+
 #begin Fonts/Default.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -20,23 +62,17 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Default.spritefont
 
-#begin Items/consumables.json
-/copy:Items/consumables.json
-
-#begin Items/crafting-materials.json
-/copy:Items/crafting-materials.json
-
-#begin Items/equipment.json
-/copy:Items/equipment.json
-
-#begin Items/key-items.json
-/copy:Items/key-items.json
-
-#begin Maps/Forest01/encounters.json
-/copy:Maps/Forest01/encounters.json
-
-#begin Maps/Forest01/events.json
-/copy:Maps/Forest01/events.json
+#begin Maps/Cave01/layer_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Cave01/layer_background.png
 
 #begin Maps/Forest01/layer_background.png
 /importer:TextureImporter
@@ -50,7 +86,7 @@
 /processorParam:TextureFormat=Color
 /build:Maps/Forest01/layer_background.png
 
-#begin Maps/Forest01/layer_overhead.png
+#begin Maps/Forest01/layer_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -60,12 +96,12 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Maps/Forest01/layer_overhead.png
+/build:Maps/Forest01/layer_background.png
 
-#begin Maps/Forest01/map_data.json
-/copy:Maps/Forest01/map_data.json
+#begin Maps/Forest01/map.json
+/copy:Maps/Forest01/map.json
 
-#begin Maps/Forest01/mask_collision.png
+#begin Maps/House01/layer_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -75,9 +111,12 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Maps/Forest01/mask_collision.png
+/build:Maps/House01/layer_background.png
 
-#begin Maps/Forest01/mask_encounters.png
+#begin Maps/House01/map.json
+/copy:Maps/House01/map.json
+
+#begin Maps/Template/layer_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -87,9 +126,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Maps/Forest01/mask_encounters.png
+/build:Maps/Template/layer_background.png
 
-#begin Maps/Forest01/mask_lighting.png
+#begin Maps/Template/layer_background.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -99,24 +138,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Maps/Forest01/mask_lighting.png
+/build:Maps/Template/layer_background.png
 
-#begin Maps/Forest01/npcs.json
-/copy:Maps/Forest01/npcs.json
-
-#begin Maps/Forest01/portals.json
-/copy:Maps/Forest01/portals.json
-
-#begin Maps/Forest01/settings.json
-/copy:Maps/Forest01/settings.json
-
-#begin Quests/main.json
-/copy:Quests/main.json
-
-#begin Quests/side.json
-/copy:Quests/side.json
-
-#begin Sprites/guard.png
+#begin Maps/Template/layer_overhead.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -126,9 +150,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/guard.png
+/build:Maps/Template/layer_overhead.png
 
-#begin Sprites/player.png
+#begin Maps/Template/layer_overhead.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -138,5 +162,131 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/player.png
+/build:Maps/Template/layer_overhead.png
+
+#begin Maps/Template/map.json
+/copy:Maps/Template/map.json
+
+#begin Maps/Template/mask_collision.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_collision.png
+
+#begin Maps/Template/mask_collision.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_collision.png
+
+#begin Maps/Template/mask_encounters.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_encounters.png
+
+#begin Maps/Template/mask_encounters.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_encounters.png
+
+#begin Maps/Template/mask_lighting.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_lighting.png
+
+#begin Maps/Template/mask_lighting.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/Template/mask_lighting.png
+
+#begin Maps/World01/layer_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Maps/World01/layer_background.png
+
+#begin Maps/World01/map.json
+/copy:Maps/World01/map.json
+
+#begin Portraits/Caelen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Portraits/Caelen.png
+
+#begin Portraits/Lyra.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Portraits/Lyra.png
+
+#begin Portraits/Thalen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Portraits/Thalen.png
 

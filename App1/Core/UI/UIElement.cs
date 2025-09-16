@@ -10,7 +10,7 @@ public abstract class UIElement
     public bool IsVisible { get; set; } = true;
     public bool IsModal { get; set; } = false;
     public bool CanReceiveFocus { get; set; } = false;
-    public Color BackgroundColor { get; set; } = Color.Black * 0.8f;
+    public Color BackgroundColor { get; set; } = Color.Black * 0.9f;
     public Color BorderColor { get; set; } = Color.White;
     public int BorderThickness { get; set; } = 2;
 

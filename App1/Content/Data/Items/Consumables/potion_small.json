@@ -1,0 +1,6 @@
+{
+  "id": "healing_potion",
+  "name": "Healing Potion",
+  "description": "Restores a small amount of HP.",
+  "stackLimit": 99
+}

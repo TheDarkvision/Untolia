@@ -1,0 +1,41 @@
+{
+  "id": "Forest01",
+  "size": { "width": 1024, "height": 1024 },
+  "tileSize": 32,
+
+  "layers": {
+    "background": "layer_background.png"
+  },
+  
+  "npcs": [
+    { "id": "old_man", "texture": "npcs/old_man.png", "x": 320, "y": 180, "dialogueKey": "old_man_hello" }
+  ],
+
+  "portals": [
+    { "id": "to_house", "x": 128, "y": 128, "width": 32, "height": 32,
+      "targetMap": "House01", "targetSpawn": { "x": 0, "y": 0 } }
+  ],
+
+  "events": [
+    { "id": "intro_dialogue", "type": "showDialogue", "when": "onEnter", "dialogueKey": "intro_flag", "oneTime": true },
+    { "id": "tile_tip", "type": "showDialogue", "when": "onTileEnter", "dialogueKey": "tip01", "tileX": 12, "tileY": 7, "tileW": 1, "tileH": 1 },
+    { "id": "wide_area", "type": "setFlag", "when": "onTileEnter", "flag": "stepped_area", "value": true, "tileX": 5, "tileY": 10, "tileW": 2, "tileH": 3 },
+    { "id": "pixel_zone", "type": "showDialogue", "when": "onTileEnter", "dialogueKey": "zone_dialog", "x": 320, "y": 200, "width": 48, "height": 16 }
+  ],
+
+  "encounters": {
+    "enabled": true,
+    "rate": 0.05,
+    "table": [
+      { "id": "wolf", "weight": 4 },
+      { "id": "slime", "weight": 6 }
+    ]
+  },
+
+  "lighting": {
+    "ambient": "#A0A0A0",
+    "emissiveTextures": []
+  },
+
+  "playerSpawn": { "x": 0, "y": 0 }
+}

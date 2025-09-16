@@ -1,0 +1,10 @@
+{
+  "id": "burn",
+  "name": "Burn",
+  "tickDamagePercent": 0.05,
+  "tickTiming": "endOfTurn",
+  "stacking": "refresh",
+  "element": "fire",
+  "blocks": [],
+  "tags": ["dot", "fire"]
+}
