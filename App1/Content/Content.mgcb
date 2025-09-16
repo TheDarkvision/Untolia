@@ -86,18 +86,6 @@
 /processorParam:TextureFormat=Color
 /build:Maps/Forest01/layer_background.png
 
-#begin Maps/Forest01/layer_background.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Forest01/layer_background.png
-
 #begin Maps/Forest01/map.json
 /copy:Maps/Forest01/map.json
 
@@ -128,30 +116,6 @@
 /processorParam:TextureFormat=Color
 /build:Maps/Template/layer_background.png
 
-#begin Maps/Template/layer_background.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Template/layer_background.png
-
-#begin Maps/Template/layer_overhead.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Template/layer_overhead.png
-
 #begin Maps/Template/layer_overhead.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -179,18 +143,6 @@
 /processorParam:TextureFormat=Color
 /build:Maps/Template/mask_collision.png
 
-#begin Maps/Template/mask_collision.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Template/mask_collision.png
-
 #begin Maps/Template/mask_encounters.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -202,30 +154,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Maps/Template/mask_encounters.png
-
-#begin Maps/Template/mask_encounters.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Template/mask_encounters.png
-
-#begin Maps/Template/mask_lighting.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Maps/Template/mask_lighting.png
 
 #begin Maps/Template/mask_lighting.png
 /importer:TextureImporter
@@ -289,4 +217,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Portraits/Thalen.png
+
+#begin Sprites/caelen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/caelen.png
 

@@ -16,16 +16,30 @@ public static class Assets
         if (content is not null)
             try
             {
+                // Prefer the Caelen sprite under Content/Sprites/caelen.png
+                Player = content.Load<Texture2D>("Sprites/caelen");
+                return;
+            }
+            catch
+            {
+                // Fallbacks below
+            }
+
+        if (content is not null)
+            try
+            {
+                // Legacy fallback if a generic 'player' asset exists
                 Player = content.Load<Texture2D>("player");
                 return;
             }
             catch
             {
-                // Fallback to placeholder if no pipeline asset named "player" exists
+                // Continue to placeholder fallback
             }
 
         Player = CreatePlayerPlaceholder(gd);
     }
+
 
     private static Texture2D CreatePlayerPlaceholder(GraphicsDevice gd)
     {

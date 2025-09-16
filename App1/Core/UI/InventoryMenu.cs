@@ -36,6 +36,11 @@ public sealed class InventoryMenu : Menu
     private InvTab _tab = InvTab.Items;
     private float _tabCooldown;
 
+    // Pane focus: switch between left actions and right inventory list
+    private enum PaneFocus { Actions, Inventory }
+    private PaneFocus _focus = PaneFocus.Actions;
+    private float _focusCooldown;
+
     public InventoryMenu()
     {
         SetupLeftMenu();
@@ -70,7 +75,8 @@ public sealed class InventoryMenu : Menu
         base.OnAdded();
         _prevWheel = Mouse.GetState().ScrollWheelValue;
         _listScroll = 0f;
-        _listNavCooldown = _tabCooldown = _actCooldown = 0.12f;
+        _listNavCooldown = _tabCooldown = _actCooldown = _focusCooldown = 0.12f;
+        _focus = PaneFocus.Actions;
         // Make sure selection is valid with current inventory
         EnsureSelectionVisible();
     }
@@ -80,65 +86,117 @@ public sealed class InventoryMenu : Menu
         _listNavCooldown = Math.Max(0, _listNavCooldown - deltaTime);
         _tabCooldown = Math.Max(0, _tabCooldown - deltaTime);
         _actCooldown = Math.Max(0, _actCooldown - deltaTime);
+        _focusCooldown = Math.Max(0, _focusCooldown - deltaTime);
 
         var kb = Keyboard.GetState();
         var ms = Mouse.GetState();
 
-        // Switch tabs: Left/Right or Q/E
-        if (_tabCooldown <= 0f && (kb.IsKeyDown(Keys.Left) || kb.IsKeyDown(Keys.Q)))
+        // Focus switching: A/D keys to switch between Actions and Inventory panes
+        if (_focusCooldown <= 0f && kb.IsKeyDown(Keys.Left))
         {
-            _tab = (InvTab)(((int)_tab + 3 - 1) % 3);
-            _tabCooldown = TabCd;
-            EnsureSelectionVisible();
+            _focus = PaneFocus.Actions;
+            _focusCooldown = NavCd;
         }
 
-        if (_tabCooldown <= 0f && (kb.IsKeyDown(Keys.Right) || kb.IsKeyDown(Keys.E)))
+        if (_focusCooldown <= 0f && kb.IsKeyDown(Keys.Right))
         {
-            _tab = (InvTab)(((int)_tab + 1) % 3);
-            _tabCooldown = TabCd;
-            EnsureSelectionVisible();
+            _focus = PaneFocus.Inventory;
+            _focusCooldown = NavCd;
         }
 
-        // Navigate list: Up/Down or W/S
-        if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Up) || kb.IsKeyDown(Keys.W)))
+        if (_focus == PaneFocus.Actions)
         {
-            var stacks = GetCurrentStacks();
-            if (stacks.Count > 0)
+            // Actions pane: Up/Down navigates menu items
+            if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Up) || kb.IsKeyDown(Keys.W)))
             {
-                _sel[_tab] = (_sel[_tab] - 1 + stacks.Count) % stacks.Count;
-                _listNavCooldown = NavCd;
+                if (_items.Count > 0)
+                {
+                    _selectedIndex = (_selectedIndex - 1 + _items.Count) % _items.Count;
+                    _listNavCooldown = NavCd;
+                }
+            }
+
+            if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Down) || kb.IsKeyDown(Keys.S)))
+            {
+                if (_items.Count > 0)
+                {
+                    _selectedIndex = (_selectedIndex + 1) % _items.Count;
+                    _listNavCooldown = NavCd;
+                }
+            }
+
+            // Enter executes the selected action
+            if (_actCooldown <= 0f && kb.IsKeyDown(Keys.Enter))
+            {
+                if (_selectedIndex >= 0 && _selectedIndex < _items.Count)
+                {
+                    _items[_selectedIndex].Action?.Invoke();
+                    _actCooldown = ActCd;
+                }
+            }
+        }
+        else // Inventory pane
+        {
+            // Switch tabs: Left/Right or Q/E
+            if (_tabCooldown <= 0f && (kb.IsKeyDown(Keys.Q)))
+            {
+                _tab = (InvTab)(((int)_tab + 3 - 1) % 3);
+                _tabCooldown = TabCd;
                 EnsureSelectionVisible();
+            }
+
+            if (_tabCooldown <= 0f && (kb.IsKeyDown(Keys.E)))
+            {
+                _tab = (InvTab)(((int)_tab + 1) % 3);
+                _tabCooldown = TabCd;
+                EnsureSelectionVisible();
+            }
+
+            // Navigate list: Up/Down or W/S
+            if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Up) || kb.IsKeyDown(Keys.W)))
+            {
+                var stacks = GetCurrentStacks();
+                if (stacks.Count > 0)
+                {
+                    _sel[_tab] = (_sel[_tab] - 1 + stacks.Count) % stacks.Count;
+                    _listNavCooldown = NavCd;
+                    EnsureSelectionVisible();
+                }
+            }
+
+            if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Down) || kb.IsKeyDown(Keys.S)))
+            {
+                var stacks = GetCurrentStacks();
+                if (stacks.Count > 0)
+                {
+                    _sel[_tab] = (_sel[_tab] + 1) % stacks.Count;
+                    _listNavCooldown = NavCd;
+                    EnsureSelectionVisible();
+                }
+            }
+
+            // Enter uses/equips selected item
+            if (_actCooldown <= 0f && kb.IsKeyDown(Keys.Enter))
+            {
+                UseSelected();
+                _actCooldown = ActCd;
             }
         }
 
-        if (_listNavCooldown <= 0f && (kb.IsKeyDown(Keys.Down) || kb.IsKeyDown(Keys.S)))
+        // Mouse wheel scroll (only works when inventory pane is focused)
+        if (_focus == PaneFocus.Inventory)
         {
-            var stacks = GetCurrentStacks();
-            if (stacks.Count > 0)
+            var wheel = ms.ScrollWheelValue;
+            var delta = wheel - _prevWheel;
+            _prevWheel = wheel;
+            if (delta != 0)
             {
-                _sel[_tab] = (_sel[_tab] + 1) % stacks.Count;
-                _listNavCooldown = NavCd;
-                EnsureSelectionVisible();
+                _listScroll -= delta / 120f * 40f; // pixels per notch
+                if (_listScroll < 0f) _listScroll = 0f;
             }
         }
 
-        // Mouse wheel scroll
-        var wheel = ms.ScrollWheelValue;
-        var delta = wheel - _prevWheel;
-        _prevWheel = wheel;
-        if (delta != 0)
-        {
-            _listScroll -= delta / 120f * 40f; // pixels per notch
-            if (_listScroll < 0f) _listScroll = 0f;
-        }
-
-        // Enter uses/equips, Escape backs out
-        if (_actCooldown <= 0f && kb.IsKeyDown(Keys.Enter))
-        {
-            UseSelected();
-            _actCooldown = ActCd;
-        }
-
+        // Escape backs out
         if (_actCooldown <= 0f && kb.IsKeyDown(Keys.Escape))
         {
             BackToGameMenu();
@@ -161,9 +219,11 @@ public sealed class InventoryMenu : Menu
 
     private void DrawLeftPanel(SpriteBatch sb, Rectangle panelRect)
     {
-        // Background
-        sb.Draw(UIAssets.PixelTexture, panelRect, Color.Black * 0.80f);
-        DrawBorder(sb, panelRect, 3, new Color(255, 255, 255, 30));
+        // Background - highlight if focused
+        var bgColor = _focus == PaneFocus.Actions ? Color.Black * 0.90f : Color.Black * 0.70f;
+        sb.Draw(UIAssets.PixelTexture, panelRect, bgColor);
+        var borderColor = _focus == PaneFocus.Actions ? new Color(255, 255, 255, 50) : new Color(255, 255, 255, 20);
+        DrawBorder(sb, panelRect, 3, borderColor);
 
         // Header
         var headerRect = new Rectangle(panelRect.X + 6, panelRect.Y + 6, panelRect.Width - 12, 48);
@@ -181,7 +241,7 @@ public sealed class InventoryMenu : Menu
 
         for (var i = 0; i < _items.Count; i++)
         {
-            var isSelected = i == _selectedIndex;
+            var isSelected = i == _selectedIndex && _focus == PaneFocus.Actions;
             var label = _items[i].Text;
             var sz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, label);
 
@@ -202,11 +262,22 @@ public sealed class InventoryMenu : Menu
             y += lh + 4f;
         }
 
-        // Bottom hint
-        var hint = "←/→: Tabs    ↑/↓: Select    Enter: Action    Esc: Back";
+        // Bottom hint - update based on focus
+        var hint = _focus == PaneFocus.Actions
+            ? "Left/Right: Switch Pane    Up/Down: Select Action    Enter: Execute    Esc: Back"
+            : "Left/Right: Switch Pane    See inventory pane for controls";
         var hsz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, hint);
         var hintRect = new Rectangle(panelRect.X + 6, panelRect.Bottom - 40, panelRect.Width - 12, 34);
         sb.Draw(UIAssets.PixelTexture, hintRect, new Color(30, 30, 30, 160));
+
+        // Truncate hint if too long for the panel
+        var maxHintWidth = hintRect.Width - 16;
+        if (hsz.X > maxHintWidth)
+        {
+            hint = TruncateWithEllipsis(hint, maxHintWidth);
+            hsz = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, hint);
+        }
+
         var hpos = new Vector2(panelRect.X + (panelRect.Width - hsz.X) / 2f,
             hintRect.Y + (hintRect.Height - hsz.Y) / 2f);
         sb.DrawStringSafe(UIAssets.DefaultFont, hint, hpos, Color.Gray);
@@ -214,8 +285,9 @@ public sealed class InventoryMenu : Menu
 
     private void DrawRightPane(SpriteBatch sb, Rectangle pane)
     {
-        // Background
-        sb.Draw(UIAssets.PixelTexture, pane, Color.Black * 0.25f);
+        // Background - highlight if focused
+        var bgColor = _focus == PaneFocus.Inventory ? Color.Black * 0.35f : Color.Black * 0.20f;
+        sb.Draw(UIAssets.PixelTexture, pane, bgColor);
 
         // Tabs bar at top
         var tabsRect = new Rectangle(pane.X + 6, pane.Y + 6, pane.Width - 12, 36);
@@ -266,7 +338,7 @@ public sealed class InventoryMenu : Menu
         for (var i = 0; i < stacks.Count; i++)
         {
             var (stack, def) = stacks[i];
-            var selected = i == selIdx;
+            var selected = i == selIdx && _focus == PaneFocus.Inventory;
 
             var rowRect = new Rectangle(listArea.X + 2, (int)(y - 2), listArea.Width - 4, (int)(RowHeight + 4));
             if (rowRect.Bottom >= listArea.Top && rowRect.Top <= listArea.Bottom)
@@ -303,6 +375,23 @@ public sealed class InventoryMenu : Menu
             var bodyRect = new Rectangle(descRect.X + 8, (int)(tPos.Y + tSz.Y + 6), descRect.Width - 16,
                 descRect.Height - (int)(tSz.Y + 16));
             DrawWrap(sb, def.Description ?? "-", bodyRect, Color.LightGray);
+        }
+
+        // Right pane instructions at bottom of description
+        if (_focus == PaneFocus.Inventory)
+        {
+            var invHint = "←/→ or Q/E: Tabs    ↑/↓: Select Item    Enter: Use    Wheel: Scroll";
+            var invHintSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, invHint);
+            var maxInvHintWidth = descRect.Width - 16;
+            
+            if (invHintSize.X > maxInvHintWidth)
+            {
+                invHint = TruncateWithEllipsis(invHint, maxInvHintWidth);
+                invHintSize = UIAssets.MeasureStringSafe(UIAssets.DefaultFont, invHint);
+            }
+
+            var invHintPos = new Vector2(descRect.X + 8, descRect.Bottom - invHintSize.Y - 4);
+            sb.DrawStringSafe(UIAssets.DefaultFont, invHint, invHintPos, Color.DarkGray);
         }
     }
 
@@ -383,6 +472,28 @@ public sealed class InventoryMenu : Menu
         _listScroll = 0f;
     }
 
+    private static string TruncateWithEllipsis(string text, int maxPixels)
+    {
+        // Early out
+        if (UIAssets.MeasureStringSafe(UIAssets.DefaultFont, text).X <= maxPixels)
+            return text;
+
+        const string ellipsis = "...";
+        int low = 0, high = text.Length;
+        // Binary search max chars that fit with ellipsis
+        while (low < high)
+        {
+            var mid = (low + high + 1) / 2;
+            var candidate = text[..mid] + ellipsis;
+            if (UIAssets.MeasureStringSafe(UIAssets.DefaultFont, candidate).X <= maxPixels)
+                low = mid;
+            else
+                high = mid - 1;
+        }
+
+        return low <= 0 ? ellipsis : text[..low] + ellipsis;
+    }
+
     // Helpers for drawing (styled to match GameMenu)
     private static void DrawBorder(SpriteBatch sb, Rectangle r, int thickness, Color c)
     {
@@ -432,4 +543,5 @@ public sealed class InventoryMenu : Menu
         Equipment,
         KeyItems
     }
+
 }
